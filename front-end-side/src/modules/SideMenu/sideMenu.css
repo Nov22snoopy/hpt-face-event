@@ -1,0 +1,11 @@
+.side-menu-header {
+  height: 96px;
+  margin: 16px;
+  /* background: rgba(255, 255, 255, 0.2); */
+  border-radius: 6px;
+  background-image: url('./../../assests/img/favicon_hpt.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+}

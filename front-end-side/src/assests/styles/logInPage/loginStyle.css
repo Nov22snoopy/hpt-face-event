@@ -1,0 +1,54 @@
+.loginPage {
+  position: relative;
+}
+/* .load-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  z-index: 2;
+} */
+/* .loginBg {
+  position: relative;
+  background-image: url('./../../img/elegant-desk-composition-top-view.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+} */
+/* .loginBg::before{
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  z-index: 3;
+  display: block;
+  z-index: 1;
+  opacity: 0.5;
+  transition: all 0.5s;
+} */
+.login {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  z-index: 2;
+  border: 0.5px solid grey;
+  
+
+}
+.submit {
+  width: 100%;
+  color: white;
+  background-color: rgb(157 33 59);
+  padding: 6px 24px;
+  border-radius: 15px;
+  font-weight: 500;
+  
+
+}
+.submit:hover {
+  background-color: #f1f5f9;
+  transition: all 0.5s;
+  color: black;
+  border: 0.5px solid grey;
+}

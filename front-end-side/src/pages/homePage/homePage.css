@@ -1,0 +1,55 @@
+.home-header {
+  height: 80px;
+  width: 100%;
+  background-color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  box-shadow: 0 2px 4px rgba(0, 0, 20, 0.08), 0 1px 2px rgba(0, 0, 20, 0.08);
+}
+
+.home-header-logo {
+  margin-top: 10px;
+  width: 280px;
+  height: 60px;
+  background-image: url("./../../assests/img/favicon_hpt.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+/* Home body css */
+
+.home-body {
+  height: 100vh;
+  max-height: -webkit-fill-available;
+  position: relative;
+  background-image: url("./../../assests/img/3306588.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.home-body-content {
+  width: 80%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  z-index: 2;
+}
+.home-body-content h1 {
+  color: rgb(157 33 59);
+  font-family: "Roboto Slab", serif;
+  font-optical-sizing: auto;
+  font-weight: 800;
+  font-style: normal;
+  letter-spacing: 0.1svb;
+}
+.home-body-content h2 {
+  margin-top: 20px;
+  font-family: "Roboto Slab", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
