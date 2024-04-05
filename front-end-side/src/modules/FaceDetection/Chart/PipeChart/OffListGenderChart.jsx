@@ -29,12 +29,12 @@ const OffListGenderChart = (props) => {
         return "Male";
       } else if (item.gender === 0) {
         return "Female";
-      }
+      };
     }),
     datasets: [
       {
         label: "Quantity",
-        data: offListGender?.map((item, i) => (item = item.quantity)),
+        data: offListGender?.map((item) => (item = item.quantity)),
         backgroundColor: ["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)"],
         borderColor: ["rgba(54, 162, 235, 1)", "rgba(255, 99, 132, 1)"],
         borderWidth: 1,

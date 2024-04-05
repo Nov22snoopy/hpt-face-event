@@ -2,6 +2,7 @@ import express from "express";
 import {
   caculateOT,
   caculateTimekeeping,
+  getAllListAttendance,
   getAllListByDate,
   getFaceDetection,
   getOffListAge,
@@ -12,7 +13,8 @@ import {
 import { AllList } from "../models/ALlList.js";
 
 const route = express.Router();
-
+// get all list
+//********* */
 route.get("/", async (req, res, next) => {
   try {
     const data = await getFaceDetection();
@@ -27,7 +29,8 @@ route.get("/", async (req, res, next) => {
     next(error);
   }
 });
-
+//get off list
+//********* */
 route.get("/offList", async (req, res, next) => {
   try {
     const data = await getOffListFace();
@@ -46,6 +49,7 @@ route.get("/offList", async (req, res, next) => {
 export default route;
 
 //get all age user of off-list by date
+//********************************** */
 route.post("/offListAge", async (req, res, next) => {
   try {
     const data = await getOffListAge(req.body.date);
@@ -63,6 +67,7 @@ route.post("/offListAge", async (req, res, next) => {
 });
 
 //get user gender of off-list by date
+//******************************** */
 route.post("/offListGender", async (req, res, next) => {
   try {
     const data = await getOffListGender(req.body.date);
@@ -80,7 +85,7 @@ route.post("/offListGender", async (req, res, next) => {
 });
 
 //get all list by date
-
+//****************** */
 route.post("/allListByDate", async (req, res, next) => {
   try {
     const data = await getAllListByDate(req.body.date);
@@ -90,6 +95,7 @@ route.post("/allListByDate", async (req, res, next) => {
         result.push(data[i]);
       }
     }
+    //caculate working time
     const timekeeping = "timekeeping";
     if (result.length >= 1) {
       for (let j = 0; j < result.length; j++) {
@@ -97,7 +103,7 @@ route.post("/allListByDate", async (req, res, next) => {
         result[j][timekeeping] = hours;
       }
     }
-
+    //caculate over time
     const ot = "over_time";
     if (result.length >= 1) {
       for (let j = 0; j < result.length; j++) {
@@ -149,6 +155,9 @@ route.post("/allListByDate", async (req, res, next) => {
 // });
 
 //get check in check out detail
+
+//get check in check out time detail
+//******************************** */
 route.post("/timeDetail", async (req, res, next) => {
   try {
     const data = await getTimekeepingDetail(req.body.id, req.body.date);
@@ -166,9 +175,17 @@ route.post("/timeDetail", async (req, res, next) => {
 });
 
 //update time check out
+//****************** */
 route.post("/updateCheckOut", async (req, res, next) => {
   try {
-    const data = new AllList(req.body.list_id, req.body.list_item_id, req.body.stream_id, req.body.va_id, req.body.gender, req.body.created_at);
+    const data = new AllList(
+      req.body.list_id,
+      req.body.list_item_id,
+      req.body.stream_id,
+      req.body.va_id,
+      req.body.gender,
+      req.body.created_at
+    );
     data
       .updateCheckOut()
       .then(
@@ -184,6 +201,65 @@ route.post("/updateCheckOut", async (req, res, next) => {
           message: err.message,
         });
       });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+    next(error);
+  }
+});
+
+//get all list attendance
+//********************* */
+route.post("/allListAttendance", async (req, res, next) => {
+  try {
+    const allList = await getAllListAttendance();
+    const attendanceList = await getAllListByDate(req.body.date);
+    const uniqueList = [];
+    const result = {
+      absent: 0,
+      fulltime: 0,
+      overTime: 0,
+      leaveSoon: 0,
+    };
+    for (let i = 0; i < attendanceList.length; i++) {
+      if (attendanceList[i]?.id !== attendanceList[i + 1]?.id) {
+        uniqueList.push(attendanceList[i]);
+      }
+    }
+    if (allList && uniqueList.length > 0) {
+      for (let i = 0; i < allList?.length; i++) {
+        for (let j = 0; j < uniqueList.length; j++) {
+          if (uniqueList[j].id !== allList[i].id) {
+            result.absent += 1;
+          }
+        }
+      }
+    }
+    if (uniqueList.length >= 1) {
+      for (let j = 0; j < uniqueList.length; j++) {
+        let hours = await caculateTimekeeping(uniqueList[j].id, req.body.date);
+        if (hours === 0) {
+          result.fulltime += 1
+        }
+        if (hours < 0) {
+          result.leaveSoon += 1
+        }
+      }
+    }
+    if (uniqueList.length >= 1) {
+      for (let j = 0; j < uniqueList.length; j++) {
+        let hours = await caculateOT(uniqueList[j].id, req.body.date);
+        if (hours > 0) {
+          result.overTime += 1
+        }
+      }
+    }
+    console.log(uniqueList);
+    res.status(200).json({
+      message: 'get attendance successfully',
+      content: result
+    })
   } catch (error) {
     res.status(500).json({
       message: error.message,

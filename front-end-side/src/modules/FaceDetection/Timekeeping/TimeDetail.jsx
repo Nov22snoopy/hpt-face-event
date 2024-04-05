@@ -102,8 +102,11 @@ const TimeDetail = () => {
             )}
           </div>
         </div>
-        <div className="mt-4 ">
-          <button className="btn btn-primary" onClick={()=>{updateCheckOut()}} >Update</button>
+        <div className="mt-4 w-fit ml-auto ">
+          {checkTimeOut()? <div className=""> ''
+            
+          </div>:<button className="btn btn-primary" onClick={()=>{updateCheckOut()}} >Update</button>}
+          
         </div>
       </form>
     </div>

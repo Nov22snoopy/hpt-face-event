@@ -179,3 +179,12 @@ export async function getTimekeepingDetail(id, date) {
     console.log(error);
   }
 }
+// get all list attendance
+export async function getAllListAttendance () {
+  try {
+    const [data] = await pool.query(`SELECT videoanalytics.face_list_items.id, videoanalytics.face_list_items.name FROM videoanalytics.face_list_items;`)
+    return data
+  } catch (error) {
+    console.log(error);
+  }
+}

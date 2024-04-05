@@ -12,6 +12,7 @@ const Timekeeping = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getAllListByDate({ date: date }));
+    setModalOpen(false)
   }, [dispatch, date, updating]);
   
   // set date
@@ -150,7 +151,7 @@ const Timekeeping = () => {
             className="btn btn-primary"
             onClick={() => {
               setModalOpen(true);
-              dispatch(getTimeDetail({id: id, date: '2024-03-18'}))
+              dispatch(getTimeDetail({id: id, date: date}))
             }}
           >
             Edit
@@ -227,12 +228,10 @@ const Timekeeping = () => {
         title="Check time detail"
         centered
         open={modalOpen}
-        onOk={() => {
-          setModalOpen(false);
-        }}
         onCancel={() => {
           setModalOpen(false);
         }}
+        footer = {null}
       >
         <TimeDetail />
       </Modal>
