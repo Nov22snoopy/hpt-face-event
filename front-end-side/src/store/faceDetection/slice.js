@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { getAllFaceDetection, getAllListByDate, getOffList, getOffListAge, getOffListGender, getTimeDetail, updateTimeOut } from "./thunkAction"
+import { getAllFaceDetection, getAllListByDate, getAttendanceList, getOffList, getOffListAge, getOffListGender, getTimeDetail, updateTimeOut } from "./thunkAction"
 
 const initialState = {
   faceDetection: null,
@@ -10,6 +10,7 @@ const initialState = {
   allListByDate: null,
   timeDetail: null,
   updating: null,
+  attendance: null,
 }
 
 export const {reducer: faceDetectionReducer, actions: faceDetectionActions} = createSlice({
@@ -95,6 +96,10 @@ export const {reducer: faceDetectionReducer, actions: faceDetectionActions} = cr
     })
     .addCase(updateTimeOut.rejected, (state, action)=> {
       state.updating = true
+    })
+    //get attendance list
+    .addCase(getAttendanceList.fulfilled, (state,actions)=>{
+      state.attendance = actions.payload;
     })
   }
 })

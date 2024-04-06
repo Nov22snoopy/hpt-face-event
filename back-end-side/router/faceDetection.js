@@ -216,50 +216,51 @@ route.post("/allListAttendance", async (req, res, next) => {
     const allList = await getAllListAttendance();
     const attendanceList = await getAllListByDate(req.body.date);
     const uniqueList = [];
-    const result = {
-      absent: 0,
-      fulltime: 0,
-      overTime: 0,
-      leaveSoon: 0,
-    };
+    const result = [
+      { status: 'absent', quantity: 0 },
+      { status: 'fulltime', quantity: 0 },
+      { status: 'leaveSoon', quantity: 0 },
+      { status: 'overTime', quantity: 0 },
+    ];
+
     for (let i = 0; i < attendanceList.length; i++) {
       if (attendanceList[i]?.id !== attendanceList[i + 1]?.id) {
         uniqueList.push(attendanceList[i]);
       }
     }
-    if (allList && uniqueList.length > 0) {
-      for (let i = 0; i < allList?.length; i++) {
-        for (let j = 0; j < uniqueList.length; j++) {
-          if (uniqueList[j].id !== allList[i].id) {
-            result.absent += 1;
+
+    if (uniqueList.length >= 1) {
+      let attendance = 0
+      for (let i = 0; i < uniqueList?.length; i++) {
+        for (let j = 0; j < allList?.length; j++) {
+          if (allList[j].id === uniqueList[i].id) {
+            attendance +=1;
+            result[0].quantity = Number(allList?.length) - attendance
           }
         }
       }
     }
+
     if (uniqueList.length >= 1) {
       for (let j = 0; j < uniqueList.length; j++) {
         let hours = await caculateTimekeeping(uniqueList[j].id, req.body.date);
-        if (hours === 0) {
-          result.fulltime += 1
+        let ot = await caculateOT(uniqueList[j].id, req.body.date);
+        if (hours === 0 || (hours >= 0.5 && hours <= 1)) {
+          result[1].quantity += 1;
         }
-        if (hours < 0) {
-          result.leaveSoon += 1
+        if (hours < 0 && ot <= 0) {
+          result[2].quantity += 1;
         }
-      }
-    }
-    if (uniqueList.length >= 1) {
-      for (let j = 0; j < uniqueList.length; j++) {
-        let hours = await caculateOT(uniqueList[j].id, req.body.date);
-        if (hours > 0) {
-          result.overTime += 1
+        if (hours > 0 || ot > 0) {
+          result[3].quantity += 1;
         }
       }
     }
-    console.log(uniqueList);
+
     res.status(200).json({
-      message: 'get attendance successfully',
-      content: result
-    })
+      message: "get attendance successfully",
+      content: result,
+    });
   } catch (error) {
     res.status(500).json({
       message: error.message,

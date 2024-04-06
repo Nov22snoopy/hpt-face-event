@@ -52,6 +52,16 @@ export const getOffListGender = createAsyncThunk(
   }
 );
 
+//get all list attendance
+export const getAttendanceList = createAsyncThunk('/faceDetection/allListAttendance', async(payload, {rejectWithValue}) =>{
+  try {
+    const res = await faceDetectionService.getAttendanceList(payload)
+    return res.data.content
+  } catch (error) {
+    return rejectWithValue(error)
+  }
+})
+
 // get all list by date
 export const getAllListByDate = createAsyncThunk(
   "/faceDetection/allListByDate",
@@ -100,4 +110,4 @@ export const updateTimeOut = createAsyncThunk('/faceDetection/updateCheckOut', a
   } catch (error) {
     return rejectWithValue(error)
   }
-})
+});

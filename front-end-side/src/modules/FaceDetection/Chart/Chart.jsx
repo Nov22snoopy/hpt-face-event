@@ -3,7 +3,7 @@ import OffListAgeChart from "./BarChart/OffListAgeChart";
 import { ConfigProvider, DatePicker } from "antd";
 import dayjs from "dayjs";
 import OffListGenderChart from "./PipeChart/OffListGenderChart";
-
+import DoughnutChart from "./DoughnutChart/AttendanceChart";
 const Chart = () => {
   const [date, setDate] = useState("2024-03-18");
   // get age in off list
@@ -25,19 +25,20 @@ const Chart = () => {
     <div className="chart container">
       <div className="data-picker w-fit ml-auto md:mr-20">
         <ConfigProvider
-         theme={{
-          components: {
-            DatePicker: {
-              /* here is your component tokens */
-              cellHoverBg	: 'white'
+          theme={{
+            components: {
+              DatePicker: {
+                /* here is your component tokens */
+                cellHoverBg: "white",
+              },
             },
-          },
-          token:{
-            colorBgElevated	:'rgb(42 43 47)',
-            colorIcon	: 'rgb(108 114 147)',
-            colorText: 'rgb(108 114 147)'
-          }
-        }}>
+            token: {
+              colorBgElevated: "rgb(42 43 47)",
+              colorIcon: "rgb(108 114 147)",
+              colorText: "rgb(108 114 147)",
+            },
+          }}
+        >
           <DatePicker
             style={{
               backgroundColor: "rgb(42 43 47)",
@@ -50,12 +51,18 @@ const Chart = () => {
       </div>
       {/*Render Chart  */}
       {/* ************ */}
-      <div className="row lg:h-screen h-auto  mt-5">
-        <div className="col-lg-6 col-12 ">
+      <div className="row mt-3">
+        <div className="chart-item col-lg-6 col-12 ">
           <OffListAgeChart data={onChange()} />
         </div>
-        <div className="col-lg-6 col-12 ">
+
+        <div className="chart-item col-lg-6 col-12 ">
           <OffListGenderChart data={onChange()} />
+        </div>
+      </div>
+      <div className="row mt-3">
+        <div className="chart-item col-lg-6 col-12 ">
+          <DoughnutChart data={onChange()} />
         </div>
       </div>
     </div>
