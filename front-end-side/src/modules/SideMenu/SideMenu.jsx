@@ -1,4 +1,10 @@
-import { RadarChartOutlined } from "@ant-design/icons";
+import {
+  RadarChartOutlined,
+  TeamOutlined,
+  VideoCameraOutlined,
+  BarChartOutlined,
+  CalculatorOutlined,
+} from "@ant-design/icons";
 import { ConfigProvider, Menu } from "antd";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
@@ -68,12 +74,56 @@ const SideMenu = () => {
               icon: <RadarChartOutlined />,
               label: (
                 <div className="md:text-xl">
-                  <NavLink to={"/faceDetection/authorizationList"}>
-                    Face Detection
-                  </NavLink>
+                  Face Detection
                 </div>
               ),
               className: " my-3",
+              children: [
+                {
+                  key: "10",
+                  icon: <TeamOutlined />,
+                  label: (
+                    <div className="md:text-xl">
+                      <NavLink to={"/faceDetection/authorizationList"}>
+                        all List
+                      </NavLink>
+                    </div>
+                  ),
+                  className: "sub-menu-item",
+                },
+                {
+                  key: "11",
+                  icon: <VideoCameraOutlined />,
+                  label: (
+                    <div className="md:text-xl">
+                      <NavLink to={"/faceDetection/offList"}>Off List</NavLink>
+                    </div>
+                  ),
+                  className: "sub-menu-item",
+                },
+                {
+                  key: "12",
+                  icon: <BarChartOutlined />,
+                  label: (
+                    <div className="md:text-xl">
+                      <NavLink to={"/faceDetection/chart"}>Chart</NavLink>
+                    </div>
+                  ),
+                  className: "sub-menu-item",
+                },
+                {
+                  key: "13",
+                  icon: <CalculatorOutlined />,
+                  label: (
+                    <div className="md:text-xl">
+                      <NavLink to={"/faceDetection/timekeeping"}>
+                        Timekeeping
+                      </NavLink>
+                    </div>
+                  ),
+                  className: "sub-menu-item",
+                },
+              ],
             },
           ]}
           style={{

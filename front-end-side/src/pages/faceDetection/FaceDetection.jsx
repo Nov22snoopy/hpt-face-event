@@ -11,7 +11,7 @@ const FaceDetection = () => {
         <div className="face-detection-header md:text-2xl text-lg ">
           <h1>Face Detection</h1>
         </div>
-        <div className="grid md:grid-cols-4 grid-cols-2 justify-center text-center">
+        {/* <div className="grid md:grid-cols-4 grid-cols-2 justify-center text-center">
           <NavLink
             defaultChecked
             to="/faceDetection/authorizationList"
@@ -32,7 +32,7 @@ const FaceDetection = () => {
           <NavLink className="nav_item hover:bg-light text-lg" to={"/faceDetection/timekeeping"}> 
             Timekeeping
           </NavLink>
-        </div>
+        </div> */}
       </div>
       <Outlet />
     </div>

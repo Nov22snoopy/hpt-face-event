@@ -53,14 +53,30 @@ export const getOffListGender = createAsyncThunk(
 );
 
 //get all list attendance
-export const getAttendanceList = createAsyncThunk('/faceDetection/allListAttendance', async(payload, {rejectWithValue}) =>{
-  try {
-    const res = await faceDetectionService.getAttendanceList(payload)
-    return res.data.content
-  } catch (error) {
-    return rejectWithValue(error)
+export const getAttendanceList = createAsyncThunk(
+  "/faceDetection/allListAttendance",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await faceDetectionService.getAttendanceList(payload);
+      return res.data.content;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
   }
-})
+);
+
+//get all list item
+export const getAllListByName = createAsyncThunk(
+  "/faceDetection/allListItem",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await faceDetectionService.getAllListByName(payload);
+      return res.data.content;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 
 // get all list by date
 export const getAllListByDate = createAsyncThunk(
@@ -88,26 +104,32 @@ export const getAllListByDate = createAsyncThunk(
 //   }
 // );
 
-// get time check in check out detail 
-export const getTimeDetail = createAsyncThunk('/faceDetection/timeDetail', async(payload, {rejectWithValue})=>{
-  try {
-    const res = await faceDetectionService.getTimeDetail(payload);
-    if (res.data.statusCode === 200) {
-      return res.data.content
+// get time check in check out detail
+export const getTimeDetail = createAsyncThunk(
+  "/faceDetection/timeDetail",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await faceDetectionService.getTimeDetail(payload);
+      if (res.data.statusCode === 200) {
+        return res.data.content;
+      }
+    } catch (error) {
+      return rejectWithValue(error);
     }
-  } catch (error) {
-    return rejectWithValue(error)
   }
-})
+);
 
 //update time check out
-export const updateTimeOut = createAsyncThunk('/faceDetection/updateCheckOut', async(payload,{rejectWithValue})=>{
-  try {
-    const res = await faceDetectionService.updateTimeOut(payload)
-    if(res.data.statusCode === 200) {
-      message.success('Update time out successfully!!')
+export const updateTimeOut = createAsyncThunk(
+  "/faceDetection/updateCheckOut",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await faceDetectionService.updateTimeOut(payload);
+      if (res.data.statusCode === 200) {
+        message.success("Update time out successfully!!");
+      }
+    } catch (error) {
+      return rejectWithValue(error);
     }
-  } catch (error) {
-    return rejectWithValue(error)
   }
-});
+);

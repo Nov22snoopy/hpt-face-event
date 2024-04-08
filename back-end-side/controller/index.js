@@ -36,7 +36,7 @@ export async function getOffListFace() {
   }
 }
 
-//get all age user of off-list by date
+//get all age user of off-list by month
 export async function getOffListAge(date) {
   try {
     const [data] =
@@ -50,7 +50,7 @@ export async function getOffListAge(date) {
   }
 }
 
-//get user gender of off-list by date
+//get user gender of off-list by month
 export async function getOffListGender(date) {
   try {
     const [data] =
@@ -63,18 +63,18 @@ export async function getOffListGender(date) {
   }
 }
 // caculating timekeeping
-export async function getTimekeepingAllList() {
-  try {
-    const [data] =
-      await pool.query(`SELECT videoanalytics.face_list_items.id, videoanalytics.face_list_items.name, videoanalytics.face_list_items.comment, videoanalytics.face_detections.confidence, videoanalytics.face_detections.face_image, videoanalytics.face_detections.frame_image, videoanalytics.face_detections.age, videoanalytics.face_detections.gender, videoanalytics.face_detections.mask, videoanalytics.face_detections.created_at
-    FROM videoanalytics.face_detections 
-    INNER JOIN videoanalytics.face_list_items ON  videoanalytics.face_detections.list_item_id = videoanalytics.face_list_items.id 
-    WHERE date(videoanalytics.face_detections.created_at) = '2024-03-18' ORDER BY id;`);
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-}
+// export async function getTimekeepingAllList() {
+//   try {
+//     const [data] =
+//       await pool.query(`SELECT videoanalytics.face_list_items.id, videoanalytics.face_list_items.name, videoanalytics.face_list_items.comment, videoanalytics.face_detections.confidence, videoanalytics.face_detections.face_image, videoanalytics.face_detections.frame_image, videoanalytics.face_detections.age, videoanalytics.face_detections.gender, videoanalytics.face_detections.mask, videoanalytics.face_detections.created_at
+//     FROM videoanalytics.face_detections
+//     INNER JOIN videoanalytics.face_list_items ON  videoanalytics.face_detections.list_item_id = videoanalytics.face_list_items.id
+//     WHERE date(videoanalytics.face_detections.created_at) = '2024-03-18' ORDER BY id;`);
+//     return data;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 
 //get all list by date
 export async function getAllListByDate(date) {
@@ -114,8 +114,8 @@ export async function caculateTimekeeping(id, date) {
         }
       }
     }
-    let ot = ((result * 1.667e-5) / 60 - 8).toFixed(1);
-    return ot;
+    let totaltime = ((result * 1.667e-5) / 60).toFixed(1);
+    return totaltime;
   } catch (error) {
     console.log(error);
   }
@@ -149,6 +149,55 @@ export async function caculateOT(id, date) {
     console.log(error);
   }
 }
+// get all list check in check out
+export async function getTimeCheck(id, date) {
+  try {
+    const [data] =
+      await pool.query(`SELECT DATE_FORMAT( videoanalytics.face_detections.created_at, "%H:%i") AS time
+  FROM videoanalytics.face_detections 
+  INNER JOIN videoanalytics.face_list_items ON  videoanalytics.face_detections.list_item_id = videoanalytics.face_list_items.id
+  WHERE date(videoanalytics.face_detections.created_at) = '${date}'  AND videoanalytics.face_detections.list_item_id = ${id};`);
+    let timeCheck = new Array(2);
+    if (data?.length > 0) {
+      const time = data?.map((t) => t.time);
+      if (time?.length > 1) {
+        for (let i = 0; i < time?.length; i++) {
+          timeCheck[0] = time[0];
+          timeCheck[1] = time[time.length - 1];
+        }
+      } else if (time?.length === 1) {
+        timeCheck[0] = time[0];
+        timeCheck[1] = "00:00";
+      }
+    }
+    return timeCheck;
+  } catch (error) {
+    console.log(error);
+  }
+}
+//get camera in and out
+export async function getCamera(id, date) {
+  try {
+    const [data] =
+      await pool.query(`SELECT videoanalytics.face_detections.stream_id 
+FROM videoanalytics.face_detections 
+INNER JOIN videoanalytics.face_list_items ON  videoanalytics.face_detections.list_item_id = videoanalytics.face_list_items.id
+WHERE date(videoanalytics.face_detections.created_at) = '${date}'  AND videoanalytics.face_detections.list_item_id = ${id};`);
+    let camera = new Array(2);
+    if (data?.length >= 1) {
+      const stream = data?.map((i) => i.stream_id);
+      if (stream?.length >= 1) {
+        for (let i = 0; i < stream.length; i++) {
+          camera[0] = stream[0];
+          camera[1] = stream[stream.length - 1];
+        }
+      }
+    }
+    return camera;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 //get all list check in check out detail
 export async function getTimekeepingDetail(id, date) {
@@ -170,20 +219,33 @@ export async function getTimekeepingDetail(id, date) {
         }
       } else if (time?.length === 1) {
         data[0][checkIn] = time[0];
-        data[0][checkOut] = '00:00'
+        data[0][checkOut] = "00:00";
       }
     }
-    const {time, ...result} = data[0]
+    const { time, ...result } = data[0];
     return result;
   } catch (error) {
     console.log(error);
   }
 }
-// get all list attendance
-export async function getAllListAttendance () {
+// get all list item
+export async function getAllListAttendance() {
   try {
-    const [data] = await pool.query(`SELECT videoanalytics.face_list_items.id, videoanalytics.face_list_items.name FROM videoanalytics.face_list_items;`)
-    return data
+    const [data] = await pool.query(
+      `SELECT videoanalytics.face_list_items.id, videoanalytics.face_list_items.name FROM videoanalytics.face_list_items;`
+    );
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+// search list item by name
+export async function getAllListByName(name) {
+  try {
+    const [data] = await pool.query(
+      `SELECT videoanalytics.face_list_items.name FROM videoanalytics.face_list_items WHERE videoanalytics.face_list_items.name LIKE '%${name}%';`
+    );
+    return data;
   } catch (error) {
     console.log(error);
   }

@@ -3,9 +3,34 @@
   margin: 16px;
   /* background: rgba(255, 255, 255, 0.2); */
   border-radius: 6px;
-  background-image: url('./../../assests/img/favicon_hpt.png');
+  background-image: url("./../../assests/img/favicon_hpt.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   cursor: pointer;
+}
+.sub-menu-item {
+  position: relative;
+  z-index: 3;
+  display: block;
+}
+.sub-menu-item::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  padding-left: 48px;
+  height: 100%;
+  width: 100%;
+  background-color: rgb(157 33 59);
+  z-index: -1;
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition:  all 0.5s;
+}
+.sub-menu-item:hover.sub-menu-item::after {
+  opacity: 1;
+  transform: scaleX(1);
 }
