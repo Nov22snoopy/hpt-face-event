@@ -1,47 +1,59 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getAllListByDate,
   getTimeDetail,
 } from "../../../store/faceDetection/thunkAction";
 import faceImage from "../../../assests/img/user-img.jpg";
-import {
-  ConfigProvider,
-  DatePicker,
-  Modal,
-  Table,
-  Tag,
-  AutoComplete,
-  Input,
-} from "antd";
+import { ConfigProvider, DatePicker, Modal, Table, Tag } from "antd";
 import TimeDetail from "./TimeDetail";
 import dayjs from "dayjs";
 import Search from "../../../component/search/Search";
+import SelectList from "../../../component/selectList/SelectList";
 const Timekeeping = () => {
-  const [options, setOptions] = useState([]);
   const [date, setDate] = useState("2024-03-18");
   const [modalOpen, setModalOpen] = useState(false);
-  const { allListByDate, updating } = useSelector(
+  const { allListByDate, updating, listId } = useSelector(
     (state) => state.FaceDetectionService
   );
-  const searchList = useRef(null);
-
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getAllListByDate({ date: date }));
-    setModalOpen(false);
-  }, [dispatch, date, updating]);
 
+
+  //set intial data for table
+  useEffect(() => {
+    dispatch(getAllListByDate({ date: date, list_id:listId }));
+    setModalOpen(false);
+  }, [dispatch, date, updating, listId]);
+  
+  //set data after selecting list face
+  // const tableData = []
+  // useMemo(() => {
+  //   if (listSelected) {
+  //     for (let i = 0; i < allListByDate?.length; i++) {
+  //       if (allListByDate[i].list_id === Number(listSelected)) {
+  //         tableData.push(allListByDate[i]);
+  //       }
+  //     }
+  //   }
+  // }, [listSelected, allListByDate, tableData]);
+
+  // //set data after searching email
+  // const data = [];
+  // useMemo(() => {
+  //   if (searchEmail && tableData.length >= 1) {
+  //     for (let i = 0; i < tableData?.length; i++) {
+  //       if (tableData[i].comment.indexOf(searchEmail) !== -1) {
+  //         data.push(tableData[i]);
+  //       }
+  //     }
+  //   }
+  // }, [searchEmail, tableData, data]);
   // set date
   //******* */
   const onChange = (d, dateString) => {
     setDate(dateString);
   };
-  // handle search input
-  //***************** */
 
-
-  console.log(allListByDate);
   // set collumn for table
   //******************* */
   const columns = [
@@ -150,60 +162,63 @@ const Timekeeping = () => {
         </div>
       ),
     },
-    //collumn arrive status
+    //collumn check
     //************ */
     {
-      title: "Arrive",
-      dataIndex: "arrive",
-      key: "arrive",
+      title: "Check",
+      dataIndex: "check",
+      key: "check",
       render: (_, { check_in, check_out, id }) => (
         <div key={id}>
-          {(() => {
-            const timeIn = check_in.split(":");
-            if (Number(timeIn[0]) * 60 * 60 + Number(timeIn[1]) * 60 > 30600) {
-              let time =
-                (Number(timeIn[0]) * 60 * 60 +
-                  Number(timeIn[1]) * 60 -
-                  (8 * 60 * 60 + 30 * 60)) /
-                60;
-              return (
-                <Tag color="warning">
-                  {" "}
-                  late: {(time / 60).toFixed(0) + "h" + (time % 60) + "m"}
-                </Tag>
-              );
-            }
-          })()}
+          <div className="arrive">
+            {(() => {
+              const timeIn = check_in.split(":");
+              if (
+                Number(timeIn[0]) * 60 * 60 + Number(timeIn[1]) * 60 >
+                30600
+              ) {
+                let time =
+                  (Number(timeIn[0]) * 60 * 60 +
+                    Number(timeIn[1]) * 60 -
+                    (8 * 60 * 60 + 30 * 60)) /
+                  60;
+                return (
+                  <Tag color="warning">
+                    {" "}
+                    late: {(time / 60).toFixed(0) + "h" + (time % 60) + "m"}
+                  </Tag>
+                );
+              }
+            })()}
+          </div>
+          <div className="leave mt-2">
+            {(() => {
+              const timeOut = check_out.split(":");
+              if (
+                Number(timeOut[0]) * 60 * 60 + Number(timeOut[1]) * 60 <
+                62100
+              ) {
+                let time =
+                  (17 * 60 * 60 -
+                    (Number(timeOut[0]) * 60 * 60 + Number(timeOut[1]) * 60)) /
+                  60;
+                return (
+                  <Tag color="error">
+                    soon: {(time / 60).toFixed(0) + "h" + (time % 60) + "m"}
+                  </Tag>
+                );
+              }
+            })()}
+          </div>
         </div>
       ),
     },
-    //collumn leave status
+    //collumn search status
     //************ */
     {
-      title: "Leave",
-      dataIndex: "leave",
-      key: "leave",
-      render: (_, { check_in, check_out, id }) => (
-        <div key={id}>
-          {(() => {
-            const timeOut = check_out.split(":");
-            if (
-              Number(timeOut[0]) * 60 * 60 + Number(timeOut[1]) * 60 <
-              62100
-            ) {
-              let time =
-                (17 * 60 * 60 -
-                  (Number(timeOut[0]) * 60 * 60 + Number(timeOut[1]) * 60)) /
-                60;
-              return (
-                <Tag color="error">
-                  soon: {(time / 60).toFixed(0) + "h" + (time % 60) + "m"}
-                </Tag>
-              );
-            }
-          })()}
-        </div>
-      ),
+      title: "Search",
+      dataIndex: "search",
+      key: "search",
     },
     //collumn Edit time//
     //**************** */
@@ -226,26 +241,17 @@ const Timekeeping = () => {
       ),
     },
   ];
-
+  // console.log(allListByDate);
   return (
     <div className="container">
       <div className="date-picker flex justify-between  my-10">
-        <div className="search">
-          {/* <AutoComplete
-            popupMatchSelectWidth={252}
-            style={{
-              width: 300,
-            }}
-            options={options}
-            onSearch={()=>{setTimeout(()=>{
-              setOptions(allListByDate?.map((item) => {return {label: item.name}}))
-            },500)}}            
-          >
-            <Input.Search size="large" placeholder="input here" enterButton />
-          </AutoComplete> */}
-          <Search/>
+      <div className="select-list">
+          <SelectList date={date} />
         </div>
-        <div className="time-picker w-fit h-2/3">
+        <div className="search">
+          <Search date = {date} list_id={listId} />
+        </div>
+        <div className="time-picker w-fit">
           <ConfigProvider
             theme={{
               components: {
@@ -265,8 +271,6 @@ const Timekeeping = () => {
               style={{
                 backgroundColor: "rgb(42 43 47)",
                 color: "rgb(108 114 147)",
-                width: "150%",
-                height: "150%",
               }}
               defaultValue={dayjs("2024-03-18")}
               onChange={onChange}
@@ -274,6 +278,7 @@ const Timekeeping = () => {
           </ConfigProvider>
         </div>
       </div>
+      {/* Table */}
       <ConfigProvider
         theme={{
           components: {

@@ -1,21 +1,29 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getOffList,
-} from "../../../store/faceDetection/thunkAction";
+import { getOffList } from "../../../store/faceDetection/thunkAction";
 import { ConfigProvider, Table, Tag } from "antd";
 import moment from "moment";
 import faceImage from "../../../assests/img/user-img.jpg";
 import "./offList.css";
-
+import { io } from "socket.io-client";
+import { socketListener } from "../../../store/faceDetection/listenerSocket";
+const socket = io("http://localhost:8080");
 const OffList = () => {
-  const { offList } = useSelector((state) => state.FaceDetectionService);
+  const [newList ,setNewList] = useState()
+  const { offList, updating } = useSelector(
+    (state) => state.FaceDetectionService
+  );
   const dispatch = useDispatch();
   //Dispatch action get up list from store//
   //************************************* */
   useEffect(() => {
     dispatch(getOffList());
-  }, [dispatch]);
+  }, [dispatch, newList]);
+  useEffect(()=>{},[
+    socket.on('addList', (newList)=>{
+      setNewList(newList)
+    })
+  ],[newList])
   //Data for table//
   //************************************* */
   const columns = [
@@ -25,7 +33,7 @@ const OffList = () => {
       title: "Image",
       dataIndex: "image, id",
       key: "image",
-      render: (_, { face_image, id }) => (
+      render: (_, { id }) => (
         <div key={id}>
           <img src={faceImage} className="size-28" alt="face_img" />
         </div>
@@ -106,33 +114,30 @@ const OffList = () => {
             Pagination: {
               itemActiveBg: "grey",
               itemInputBg: "grey",
-              colorText: "white"
+              colorText: "white",
             },
             Table: {
-              headerColor	:'white',
-              headerSplitColor:	'rgb(42 43 47)',
-              borderColor:"rgb(108 114 147)",
-              fontFamily: '"Roboto, sans-serif"'
-              
-              
-            }
+              headerColor: "white",
+              headerSplitColor: "rgb(42 43 47)",
+              borderColor: "rgb(108 114 147)",
+              fontFamily: '"Roboto, sans-serif"',
+            },
           },
-          token:{
-            colorBgContainer:'rgb(42 43 47)',
-            colorText:'rgb(108 114 147)',
-            fontSize:'18px',
-            fontWeightStrong: '24px'
-          }
-          
+          token: {
+            colorBgContainer: "rgb(42 43 47)",
+            colorText: "rgb(108 114 147)",
+            fontSize: "18px",
+            fontWeightStrong: "24px",
+          },
         }}
       >
         <Table
-          dataSource={offList}
+          dataSource={offList ? offList : []}
           rowKey={(record) => record.id}
           columns={columns}
           style={{
-            backgroundColor: 'rgb(42 43 47)',
-            borderRadius:'10px',
+            backgroundColor: "rgb(42 43 47)",
+            borderRadius: "10px",
           }}
         />
       </ConfigProvider>

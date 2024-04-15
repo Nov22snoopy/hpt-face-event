@@ -4,6 +4,7 @@ import {
   VideoCameraOutlined,
   BarChartOutlined,
   CalculatorOutlined,
+  PlusOutlined
 } from "@ant-design/icons";
 import { ConfigProvider, Menu } from "antd";
 import React, { useState } from "react";
@@ -123,6 +124,17 @@ const SideMenu = () => {
                   ),
                   className: "sub-menu-item",
                 },
+                {
+                  key: '14',
+                  icon: <PlusOutlined />,
+                  label: (
+                    <div className="md:text-xl">
+                      <NavLink to={"/faceDetection/addList"}>
+                        Create new list
+                      </NavLink>
+                    </div>
+                  )
+                }
               ],
             },
           ]}

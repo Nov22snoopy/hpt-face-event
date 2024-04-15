@@ -8,6 +8,7 @@ import OffList from "../modules/FaceDetection/OffList/OffList";
 import IndexPage from "../modules/indexPage/IndexPage";
 import Chart from "../modules/FaceDetection/Chart/Chart";
 import Timekeeping from "../modules/FaceDetection/Timekeeping/Timekeeping";
+import AddList from "../modules/FaceDetection/AddList/AddList";
 const Router = () => {
   const element = useRoutes([
     {
@@ -42,6 +43,10 @@ const Router = () => {
             {
               path: '/faceDetection/timekeeping',
               element: <Timekeeping/>
+            },
+            {
+              path: "/faceDetection/addList",
+              element: <AddList/>
             }
           ],
         },

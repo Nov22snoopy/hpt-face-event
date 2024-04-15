@@ -1,9 +1,21 @@
-import { createSlice } from "@reduxjs/toolkit"
-import { getAllFaceDetection, getAllListByDate, getAllListByName, getAttendanceList, getOffList, getOffListAge, getOffListGender, getTimeDetail, updateTimeOut } from "./thunkAction"
+import { createSlice } from "@reduxjs/toolkit";
+import {
+  addList,
+  getAllFaceDetection,
+  getAllListByDate,
+  getAllListByMail,
+  getAttendanceList,
+  getListFace,
+  getOffList,
+  getOffListAge,
+  getOffListGender,
+  getTimeDetail,
+  updateTimeOut,
+} from "./thunkAction";
 
 const initialState = {
   faceDetection: null,
-  loading:null,
+  loading: null,
   offList: null,
   offListAge: null,
   offListGender: null,
@@ -11,100 +23,131 @@ const initialState = {
   timeDetail: null,
   updating: null,
   attendance: null,
-  allList: null
-}
+  allList: null,
+  searchEmail: null,
+  listFace: null,
+  selectedList: null,
+  listId:null,
+  
+};
 
-export const {reducer: faceDetectionReducer, actions: faceDetectionActions} = createSlice({
-  name: 'faceDetectionService',
-  initialState,
-  reducers: {
+export const { reducer: faceDetectionReducer, actions: faceDetectionActions } =
+  createSlice({
+    name: "faceDetectionService",
+    initialState,
+    reducers: {
+      //select list face
+      selectList:(state,actions)=>{
+        state.listId = actions.payload
+      },
+      clearSelect:(state, actions)=>{
+        state.listId = null
+      },
 
-  },
-  extraReducers:(builder)=>{
-    builder
-    //get all list
-    .addCase(getAllFaceDetection.fulfilled, (state,actions)=>{
-      state.faceDetection = actions.payload;
-      state.loading = true
-    })
-    .addCase(getAllFaceDetection.pending, (state,actions)=> {
-      state.loading = false
-    })
-    .addCase(getAllFaceDetection.rejected, (state, action)=> {
-      state.loading = true
-    })
-    //get off list
-    .addCase(getOffList.fulfilled, (state,actions)=>{
-      state.offList = actions.payload;
-      state.loading = true
-    })
-    .addCase(getOffList.pending, (state,actions)=> {
-      state.loading = false
-    })
-    .addCase(getOffList.rejected, (state, action)=> {
-      state.loading = true
-    })
-    //get off list age
-    .addCase(getOffListAge.fulfilled, (state,actions)=>{
-      state.offListAge = actions.payload;
-      state.loading = true
-    })
-    .addCase(getOffListAge.pending, (state,actions)=> {
-      state.loading = false
-    })
-    .addCase(getOffListAge.rejected, (state, action)=> {
-      state.loading = true
-    })
-    //get off list gender by date
-    .addCase(getOffListGender.fulfilled, (state,actions)=>{
-      state.offListGender = actions.payload;
-      state.loading = true
-    })
-    .addCase(getOffListGender.pending, (state,actions)=> {
-      state.loading = false
-    })
-    .addCase(getOffListGender.rejected, (state, action)=> {
-      state.loading = true
-    })
-    //get all list by date
-    .addCase(getAllListByDate.fulfilled, (state,actions)=>{
-      state.allListByDate = actions.payload;
-      state.loading = true
-    })
-    .addCase(getAllListByDate.pending, (state,actions)=> {
-      state.loading = false
-    })
-    .addCase(getAllListByDate.rejected, (state, action)=> {
-      state.loading = true
-    })
-    //get time check in check out detail
-    .addCase(getTimeDetail.fulfilled, (state,actions)=>{
-      state.timeDetail = actions.payload;
-      state.loading = true
-    })
-    .addCase(getTimeDetail.pending, (state,actions)=> {
-      state.loading = false
-    })
-    .addCase(getTimeDetail.rejected, (state, action)=> {
-      state.loading = true
-    })
-    //update time out
-    .addCase(updateTimeOut.fulfilled, (state,actions)=>{
-      state.updating = true
-    })
-    .addCase(updateTimeOut.pending, (state,actions)=> {
-      state.updating = false
-    })
-    .addCase(updateTimeOut.rejected, (state, action)=> {
-      state.updating = true
-    })
-    //get attendance list
-    .addCase(getAttendanceList.fulfilled, (state,actions)=>{
-      state.attendance = actions.payload;
-    })
-    //get all list item
-    .addCase(getAllListByName.fulfilled, (state,actions)=>{
-      state.allList = actions.payload;
-    })
-  }
-})
+      //search email
+      clearSearch: (state, actions) => {
+        state.searchEmail = null;
+      },
+      //off List
+      // offListL: (state, actions) => {
+      //   state.offList = actions.payload
+      // }
+    },
+    extraReducers: (builder) => {
+      builder
+        //get all list
+        .addCase(getAllFaceDetection.fulfilled, (state, actions) => {
+          state.faceDetection = actions.payload;
+          state.loading = true;
+        })
+        .addCase(getAllFaceDetection.pending, (state, actions) => {
+          state.loading = false;
+        })
+        .addCase(getAllFaceDetection.rejected, (state, actions) => {
+          state.loading = true;
+        })
+        //get off list
+        .addCase(getOffList.fulfilled, (state, actions) => {
+          state.offList = actions.payload;
+          state.loading = true;
+        })
+        .addCase(getOffList.pending, (state, actions) => {
+          state.loading = false;
+        })
+        .addCase(getOffList.rejected, (state, actions) => {
+          state.loading = true;
+        })
+        //get off list age
+        .addCase(getOffListAge.fulfilled, (state, actions) => {
+          state.offListAge = actions.payload;
+          state.loading = true;
+        })
+        .addCase(getOffListAge.pending, (state, actions) => {
+          state.loading = false;
+        })
+        .addCase(getOffListAge.rejected, (state, actions) => {
+          state.loading = true;
+        })
+        //get off list gender by date
+        .addCase(getOffListGender.fulfilled, (state, actions) => {
+          state.offListGender = actions.payload;
+          state.loading = true;
+        })
+        .addCase(getOffListGender.pending, (state, actions) => {
+          state.loading = false;
+        })
+        .addCase(getOffListGender.rejected, (state, actions) => {
+          state.loading = true;
+        })
+        //get all list by date
+        .addCase(getAllListByDate.fulfilled, (state, actions) => {
+          state.allListByDate = actions.payload;
+          state.loading = true;
+        })
+        .addCase(getAllListByDate.pending, (state, actions) => {
+          state.loading = false;
+        })
+        .addCase(getAllListByDate.rejected, (state, actions) => {
+          state.loading = true;
+        })
+        //get time check in check out detail
+        .addCase(getTimeDetail.fulfilled, (state, actions) => {
+          state.timeDetail = actions.payload;
+          state.loading = true;
+        })
+        .addCase(getTimeDetail.pending, (state, actions) => {
+          state.loading = false;
+        })
+        .addCase(getTimeDetail.rejected, (state, actions) => {
+          state.loading = true;
+        })
+        //update time out
+        .addCase(updateTimeOut.fulfilled, (state, actions) => {
+          state.updating = true;
+        })
+        .addCase(updateTimeOut.pending, (state, actionss) => {
+          state.updating = false;
+        })
+        .addCase(updateTimeOut.rejected, (state, action) => {
+          state.updating = true;
+        })
+        //get attendance list
+        .addCase(getAttendanceList.fulfilled, (state, actions) => {
+          state.attendance = actions.payload;
+        })
+        //get all list item
+        .addCase(getAllListByMail.fulfilled, (state, actions) => {
+          state.allList = actions.payload?.slice(0,10);
+        })
+        //get list face
+        .addCase(getListFace.fulfilled, (state, actions)=>{
+          state.listFace = actions.payload
+        })
+        .addCase(addList.pending, (state, actions)=>{
+          state.updating = false
+        })
+        .addCase(addList.fulfilled, (state,actions)=>{
+          state.updating = true
+        })
+    },
+  });

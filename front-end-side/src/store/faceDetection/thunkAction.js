@@ -2,13 +2,14 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { faceDetectionService } from "../../service/FaceDetection.service";
 import { offListService } from "../../service/OffList.service";
 import { message } from "antd";
+import { socketClient } from "../..";
 
 export const getAllFaceDetection = createAsyncThunk(
   "/faceDetection",
   async (_, { rejectWithValue }) => {
     try {
       const res = await faceDetectionService.getAllFaceDetection();
-      return res.data.content;
+      return [...res.data.content];
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -20,7 +21,7 @@ export const getOffList = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await offListService.getOffList();
-      return res.data.content;
+      return res.data.content
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -32,7 +33,7 @@ export const getOffListAge = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const res = await offListService.getOffListAge(payload);
-      return res.data.content;
+      return [...res.data.content];
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -45,7 +46,7 @@ export const getOffListGender = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const res = await offListService.getOffListGender(payload);
-      return res.data.content;
+      return [...res.data.content];
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -58,25 +59,14 @@ export const getAttendanceList = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const res = await faceDetectionService.getAttendanceList(payload);
-      return res.data.content;
+      return [...res.data.content];
     } catch (error) {
       return rejectWithValue(error);
     }
   }
 );
 
-//get all list item
-export const getAllListByName = createAsyncThunk(
-  "/faceDetection/allListItem",
-  async (payload, { rejectWithValue }) => {
-    try {
-      const res = await faceDetectionService.getAllListByName(payload);
-      return res.data.content;
-    } catch (error) {
-      return rejectWithValue(error);
-    }
-  }
-);
+
 
 // get all list by date
 export const getAllListByDate = createAsyncThunk(
@@ -84,7 +74,7 @@ export const getAllListByDate = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const res = await faceDetectionService.getAllListByDate(payload);
-      return res.data.content;
+      return [...res.data.content];
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -111,7 +101,7 @@ export const getTimeDetail = createAsyncThunk(
     try {
       const res = await faceDetectionService.getTimeDetail(payload);
       if (res.data.statusCode === 200) {
-        return res.data.content;
+        return [...res.data.content];
       }
     } catch (error) {
       return rejectWithValue(error);
@@ -133,3 +123,46 @@ export const updateTimeOut = createAsyncThunk(
     }
   }
 );
+
+// get all list face
+export const getListFace = createAsyncThunk('/faceDetection/allListFace', async(_,{rejectWithValue})=>{
+  try {
+    const res = await faceDetectionService.getListFace();
+    return [...res.data.content];
+  } catch (error) {
+    return rejectWithValue(error)
+  }
+})
+//get all list item by email
+export const getAllListByMail = createAsyncThunk(
+  "/faceDetection/allListItem",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await  faceDetectionService.getAllListByMail(payload.email, payload.list_id);
+      return [...res.data.content];
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+//search list item by email
+export const searchByEmail = createAsyncThunk(`/faceDetection/searchItemByEmail`, async(payload, {rejectWithValue})=>{
+  try {
+    const res = await faceDetectionService.searchByEmail(payload);
+    return [...res.data.content];
+  } catch (error) {
+    return rejectWithValue(error)
+  }
+})
+
+export const addList = createAsyncThunk('/faceDetection/addList', async(payload, {rejectWithValue})=>{
+  try {
+    const res = await faceDetectionService.addList(payload)
+    if(res.data.statusCode === 200) {
+      message.success('create new list successfully')
+    }
+  } catch (error) {
+    return rejectWithValue(error)
+  }
+})
+

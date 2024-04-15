@@ -4,16 +4,19 @@ import {
   caculateTimekeeping,
   getAllListAttendance,
   getAllListByDate,
-  getAllListByName,
+  getAllListByMail,
   getCamera,
   getFaceDetection,
+  getListFace,
   getOffListAge,
   getOffListFace,
   getOffListGender,
   getTimeCheck,
   getTimekeepingDetail,
 } from "../controller/index.js";
+import { io } from "../socket/socket.js";
 import { AllList } from "../models/ALlList.js";
+import { Indentify } from "../models/Identify.js";
 
 const route = express.Router();
 // get all list
@@ -90,8 +93,11 @@ route.post("/offListGender", async (req, res, next) => {
 //get all list by month
 //****************** */
 route.post("/allListByDate", async (req, res, next) => {
+  const email = req.body.email;
+  const date = req.body.date;
+  const list_id = req.body.list_id;
   try {
-    const data = await getAllListByDate(req.body.date);
+    const data = await getAllListByDate(date, list_id, email);
     const result = [];
     for (let i = 0; i < data.length; i++) {
       if (data[i]?.id !== data[i + 1]?.id) {
@@ -258,16 +264,55 @@ route.post("/allListAttendance", async (req, res, next) => {
     next(error);
   }
 });
+//get all list face
+//********************* */
+route.get("/listFace", async (req, res, next) => {
+  try {
+    const data = await getListFace();
+    res.status(200).json({
+      message: "get all list face successfully",
+      content: data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+    next(error);
+  }
+});
 
 //get all list item
-route.get("/allListByName", async (req, res, next) => {
+route.get("/allListByMail", async (req, res, next) => {
   try {
-    console.log(req.query.name);
-    const data = await getAllListByName(req.query.name)
+    const data = await getAllListByMail(req.query.email, req.query.list_id);
     res.status(200).json({
-      message: 'get all list item successfully',
-      content: data
-    })
+      message: "get all list item successfully",
+      content: data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+    next(error);
+  }
+});
+
+// create new list
+route.post("/addList", async (req, res, next) => {
+  try {
+    const newList = new Indentify(
+      req.body.stream_id,
+      req.body.va_id,
+      req.body.age,
+      req.body.gender,
+      req.body.mask
+    );
+    newList.addList();
+    io.emit("addList", newList)
+    res.status(200).json({
+      message: "create new list successfully",
+      statusCode: res.statusCode,
+    });
   } catch (error) {
     res.status(500).json({
       message: error.message,

@@ -1,12 +1,13 @@
-import express from "express";
 import dotenv from "dotenv";
 import userRoute from "./router/user.js";
-import faceDetectionRoute from './router/faceDetection.js'
+import faceDetectionRoute from "./router/faceDetection.js";
 import morgan from "morgan";
 import bodyParser from "body-parser";
+import { app, server } from "./socket/socket.js";
+
 dotenv.config();
 
-const app = express();
+
 app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -24,7 +25,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/user", userRoute);
-app.use("/faceDetection",faceDetectionRoute)
+app.use("/faceDetection", faceDetectionRoute);
 app.use((req, res, next) => {
   const error = new Error("Not found");
   error.status = 404;
@@ -39,6 +40,6 @@ app.use((error, req, res, next) => {
     },
   });
 });
-app.listen(process.env.PORT || 3000, () => {
+server.listen(process.env.PORT || 3000, () => {
   console.log("server is listenning on port 8080");
 });

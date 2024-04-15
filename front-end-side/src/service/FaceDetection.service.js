@@ -7,5 +7,7 @@ export const faceDetectionService = {
   getTimeDetail: (payload) => http.post('/faceDetection/timeDetail', payload),
   updateTimeOut: (payload) => http.post(`/faceDetection/updateCheckOut`, payload),
   getAttendanceList: (payload) => http.post (`/faceDetection/allListAttendance`, payload),
-  getAllListByName :(query) => http.get(`/faceDetection/allListByName?name=${query}`)
+  getAllListByMail :(query, payload) => http.get(`/faceDetection/allListByMail?email=${query}&list_id=${payload}`),
+  getListFace: () => http.get(`/faceDetection/listFace`),
+  addList :(payload) => http.post(`/faceDetection/addList`, payload)
 }

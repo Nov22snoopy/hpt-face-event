@@ -17,7 +17,10 @@ export async function getFaceDetection() {
   try {
     const [data] =
       await pool.query(`SELECT videoanalytics.face_list_items.id, videoanalytics.face_list_items.name, videoanalytics.face_list_items.comment, videoanalytics.face_detections.confidence, videoanalytics.face_detections.face_image, videoanalytics.face_detections.frame_image, videoanalytics.face_detections.age, videoanalytics.face_detections.gender, videoanalytics.face_detections.mask, videoanalytics.face_detections.created_at, videoanalytics.streams.name as camera, videoanalytics.face_lists.name AS list_face
-      FROM videoanalytics.face_detections INNER JOIN videoanalytics.face_list_items ON  videoanalytics.face_detections.list_item_id = videoanalytics.face_list_items.id INNER JOIN videoanalytics.streams ON videoanalytics.face_detections.stream_id = videoanalytics.streams.id INNER JOIN videoanalytics.face_lists ON videoanalytics.face_detections.list_id = videoanalytics.face_lists.id`);
+      FROM videoanalytics.face_detections 
+      INNER JOIN videoanalytics.face_list_items ON  videoanalytics.face_detections.list_item_id = videoanalytics.face_list_items.id 
+      INNER JOIN videoanalytics.streams ON videoanalytics.face_detections.stream_id = videoanalytics.streams.id 
+      INNER JOIN videoanalytics.face_lists ON videoanalytics.face_detections.list_id = videoanalytics.face_lists.id ORDER BY created_at DESC;`);
     return data;
   } catch (error) {
     console.log(error);
@@ -28,8 +31,10 @@ export async function getOffListFace() {
   try {
     const [data] =
       await pool.query(`SELECT videoanalytics.face_detections.id, videoanalytics.face_detections.face_image, videoanalytics.streams.name AS camera,  videoanalytics.face_detections.age, videoanalytics.face_detections.gender, videoanalytics.face_detections.mask, videoanalytics.face_detections.created_at 
-      FROM videoanalytics.face_detections INNER JOIN videoanalytics.streams 
-      WHERE videoanalytics.face_detections.stream_id =videoanalytics.streams.id and videoanalytics.face_detections.list_item_id is null`);
+      FROM videoanalytics.face_detections 
+      INNER JOIN videoanalytics.streams 
+      WHERE videoanalytics.face_detections.stream_id =videoanalytics.streams.id 
+      AND videoanalytics.face_detections.list_item_id is null ORDER BY id DESC;`);
     return data;
   } catch (error) {
     console.log(error);
@@ -62,31 +67,50 @@ export async function getOffListGender(date) {
     console.log(error);
   }
 }
-// caculating timekeeping
-// export async function getTimekeepingAllList() {
-//   try {
-//     const [data] =
-//       await pool.query(`SELECT videoanalytics.face_list_items.id, videoanalytics.face_list_items.name, videoanalytics.face_list_items.comment, videoanalytics.face_detections.confidence, videoanalytics.face_detections.face_image, videoanalytics.face_detections.frame_image, videoanalytics.face_detections.age, videoanalytics.face_detections.gender, videoanalytics.face_detections.mask, videoanalytics.face_detections.created_at
-//     FROM videoanalytics.face_detections
-//     INNER JOIN videoanalytics.face_list_items ON  videoanalytics.face_detections.list_item_id = videoanalytics.face_list_items.id
-//     WHERE date(videoanalytics.face_detections.created_at) = '2024-03-18' ORDER BY id;`);
-//     return data;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
 
 //get all list by date
-export async function getAllListByDate(date) {
-  try {
-    const [data] =
-      await pool.query(`SELECT videoanalytics.face_list_items.id, videoanalytics.face_list_items.name, videoanalytics.face_list_items.comment, videoanalytics.face_detections.face_image,videoanalytics.face_detections.gender, videoanalytics.face_detections.created_at
-    FROM videoanalytics.face_detections 
-    INNER JOIN videoanalytics.face_list_items ON  videoanalytics.face_detections.list_item_id = videoanalytics.face_list_items.id
-    WHERE date(videoanalytics.face_detections.created_at) = '${date}'  ORDER BY id;`);
-    return data;
-  } catch (error) {
-    console.log(error);
+export async function getAllListByDate(date, list_id, email) {
+  //render all list item
+  if (!list_id && !email) {
+    try {
+      const [data] =
+        await pool.query(`SELECT videoanalytics.face_list_items.id, videoanalytics.face_list_items.name, videoanalytics.face_list_items.comment, videoanalytics.face_detections.face_image,videoanalytics.face_detections.gender, videoanalytics.face_detections.created_at, videoanalytics.face_list_items.list_id, videoanalytics.face_lists.name as list
+      FROM videoanalytics.face_detections 
+      INNER JOIN videoanalytics.face_list_items ON  videoanalytics.face_detections.list_item_id = videoanalytics.face_list_items.id
+      INNER JOIN videoanalytics.face_lists ON videoanalytics.face_detections.list_id = videoanalytics.face_lists.id
+      WHERE date(videoanalytics.face_detections.created_at) = '${date}'  ORDER BY id;`);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  //render list item by list  
+  else if (!email && list_id) {
+    try {
+      const [data] =
+        await pool.query(`SELECT videoanalytics.face_list_items.id, videoanalytics.face_list_items.name, videoanalytics.face_list_items.comment, videoanalytics.face_detections.face_image,videoanalytics.face_detections.gender, videoanalytics.face_detections.created_at, videoanalytics.face_list_items.list_id, videoanalytics.face_lists.name as list
+      FROM videoanalytics.face_detections 
+      INNER JOIN videoanalytics.face_list_items ON  videoanalytics.face_detections.list_item_id = videoanalytics.face_list_items.id
+      INNER JOIN videoanalytics.face_lists ON videoanalytics.face_detections.list_id = videoanalytics.face_lists.id
+      WHERE date(videoanalytics.face_detections.created_at) = '${date}'  AND videoanalytics.face_list_items.list_id = ${list_id} ORDER BY id;`);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  //render list item by email and list 
+  else if (list_id && email) {
+    try {
+      const [data] =
+        await pool.query(`SELECT videoanalytics.face_list_items.id, videoanalytics.face_list_items.name, videoanalytics.face_list_items.comment, videoanalytics.face_detections.face_image,videoanalytics.face_detections.gender, videoanalytics.face_detections.created_at, videoanalytics.face_list_items.list_id, videoanalytics.face_lists.name as list
+      FROM videoanalytics.face_detections 
+      INNER JOIN videoanalytics.face_list_items ON  videoanalytics.face_detections.list_item_id = videoanalytics.face_list_items.id
+      INNER JOIN videoanalytics.face_lists ON videoanalytics.face_detections.list_id = videoanalytics.face_lists.id
+      WHERE date(videoanalytics.face_detections.created_at) = '${date}' AND videoanalytics.face_list_items.list_id = ${list_id} AND videoanalytics.face_list_items.comment LIKE "%${email}%" ORDER BY id;`);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
@@ -239,14 +263,40 @@ export async function getAllListAttendance() {
     console.log(error);
   }
 }
-// search list item by name
-export async function getAllListByName(name) {
+
+//get face list
+export async function getListFace() {
   try {
-    const [data] = await pool.query(
-      `SELECT videoanalytics.face_list_items.name FROM videoanalytics.face_list_items WHERE videoanalytics.face_list_items.name LIKE '%${name}%';`
-    );
+    const [data] = await pool.query(`SELECT * FROM videoanalytics.face_lists`);
     return data;
   } catch (error) {
     console.log(error);
+  }
+}
+// get all list by email
+export async function getAllListByMail(email, list_id) {
+  if (!list_id && email) {
+    try {
+      const [data] = await pool.query(
+        `SELECT videoanalytics.face_list_items.comment AS email, videoanalytics.face_list_items.list_id, videoanalytics.face_lists.name as list FROM videoanalytics.face_list_items
+        INNER JOIN videoanalytics.face_lists ON videoanalytics.face_list_items.list_id = videoanalytics.face_lists.id 
+        WHERE videoanalytics.face_list_items.comment LIKE "%${email}%" ;`
+      );
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  } 
+  else if (list_id && email) {
+    try {
+      const [data] = await pool.query(
+        `SELECT videoanalytics.face_list_items.comment AS email, videoanalytics.face_list_items.list_id, videoanalytics.face_lists.name as list FROM videoanalytics.face_list_items
+        INNER JOIN videoanalytics.face_lists ON videoanalytics.face_list_items.list_id = videoanalytics.face_lists.id 
+        WHERE videoanalytics.face_list_items.comment LIKE "%${email}%" AND videoanalytics.face_list_items.list_id = ${list_id} ;`
+      );
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

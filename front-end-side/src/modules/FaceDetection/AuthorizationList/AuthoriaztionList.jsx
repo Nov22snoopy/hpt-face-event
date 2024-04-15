@@ -7,6 +7,7 @@ import Loading from "../../../component/Loading";
 import { ConfigProvider, Pagination } from "antd";
 import userImage from "../../../assests/img/user-img.jpg";
 import SkeletonImage from "antd/es/skeleton/Image";
+import { socketClient } from "../../..";
 const AuthoriaztionList = () => {
   const [page1, setPage1] = useState(0);
   const [page2, setPage2] = useState(12);
@@ -17,7 +18,6 @@ const AuthoriaztionList = () => {
   useEffect(() => {
     dispatch(getAllFaceDetection());
   }, [dispatch]);
-
   // function set gender
   //********************* */
   const genderDetect = (gender) => {
