@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { connectSocket, disconnectSocket } from "./thunkAction"
+import { connectSocket } from "./thunkAction"
 
 const initialState = {
   connectStatus:"",
@@ -15,8 +15,5 @@ export const { reducer: socketReducer, actions: socketAction} = createSlice({
     .addCase(connectSocket.fulfilled, (state)=>{
       state.connectStatus ='connected'
     })
-    // .addCase(disconnectSocket.fulfilled, (state)=> {
-    //   state.connectStatus = 'disconnected'
-    // })
   }
 })

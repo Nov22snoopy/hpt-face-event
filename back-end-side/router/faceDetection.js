@@ -2,9 +2,11 @@ import express from "express";
 import {
   caculateOT,
   caculateTimekeeping,
+  getAllCamera,
   getAllListAttendance,
   getAllListByDate,
   getAllListByMail,
+  getAllNotification,
   getCamera,
   getFaceDetection,
   getListFace,
@@ -17,6 +19,7 @@ import {
 import { io } from "../socket/socket.js";
 import { AllList } from "../models/ALlList.js";
 import { Indentify } from "../models/Identify.js";
+import { Notification } from "../models/Notification.js";
 
 const route = express.Router();
 // get all list
@@ -52,7 +55,6 @@ route.get("/offList", async (req, res, next) => {
     next(error);
   }
 });
-export default route;
 
 //get all age user of off-list by date
 //********************************** */
@@ -308,7 +310,7 @@ route.post("/addList", async (req, res, next) => {
       req.body.mask
     );
     newList.addList();
-    io.emit("addList", newList)
+    io.emit("addList", newList);
     res.status(200).json({
       message: "create new list successfully",
       statusCode: res.statusCode,
@@ -320,3 +322,26 @@ route.post("/addList", async (req, res, next) => {
     next(error);
   }
 });
+
+
+//get all camera
+route.get("/camera", async (req, res, next) => {
+  try {
+    const data = await getAllCamera();
+    res.status(200).json({
+      message: "get all camera successfully",
+      content: data,
+      statusCode: res.statusCode,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+    next(error);
+  }
+});
+
+
+
+
+export default route;

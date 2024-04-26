@@ -300,3 +300,23 @@ export async function getAllListByMail(email, list_id) {
     }
   }
 }
+
+//get all notification
+export const getAllNotification = async() => {
+  try {
+    const [data] = await pool.query(`SELECT id, name, created_at, status FROM videoanalytics.warning_setting;`)
+    return data
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+//get all camera detection
+export const getAllCamera = async() =>{
+  try {
+    const [data] = await pool.query(`SELECT videoanalytics.streams.id, videoanalytics.streams.name FROM videoanalytics.streams;`)
+    return data
+  } catch (error) {
+    console.log(error);
+  }
+}

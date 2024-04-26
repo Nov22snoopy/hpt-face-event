@@ -1,21 +1,20 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AutoComplete, Input, ConfigProvider } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getAllListByDate,
-  getAllListByMail,
-} from "../../store/faceDetection/thunkAction";
+import { getAllListByMail } from "../../store/faceDetection/thunkAction";
 import { UserOutlined, CloseOutlined } from "@ant-design/icons";
 import { faceDetectionActions } from "../../store/faceDetection/slice";
 
 const Search = (props) => {
   const [value, setValue] = useState();
   const searchList = useRef(null);
-  const { allList } = useSelector((state) => state.FaceDetectionService);
+  const { allList, listId, searchEmail } = useSelector((state) => state.FaceDetectionService);
   const dispatch = useDispatch();
-  useMemo(() => {
-    setValue(value);
-  }, [value]);
+  useEffect(()=>{
+    if (!searchEmail){
+      setValue('')
+    }
+  },[searchEmail])
   return (
     <div>
       <ConfigProvider
@@ -35,7 +34,7 @@ const Search = (props) => {
           }}
           value={value}
           options={allList?.map((item, index) => {
-            if (!isNaN(props.list_id) && props.list_id !== 0) {
+            if (listId && listId !== 0) {
               return { label: item.email, value: item.email };
             } else {
               return {
@@ -54,14 +53,14 @@ const Search = (props) => {
               clearTimeout(searchList.current);
             }
             searchList.current = setTimeout(() => {
-              if (!isNaN(props.list_id) && props.list_id !== 0) {
+              if (listId && listId !== 0) {
                 dispatch(
                   getAllListByMail({
                     email: value,
-                    list_id: Number(props.list_id),
+                    list_id: Number(listId),
                   })
                 );
-              } else if (isNaN(props.list_id) || props.list_id === 0) {
+              } else if (!listId || listId === 0) {
                 dispatch(getAllListByMail({ email: value, list_id: " " }));
               }
             }, 300);
@@ -70,43 +69,24 @@ const Search = (props) => {
             setValue(value);
           }}
           onSelect={(value) => {
-            if (props.list_id) setValue(value);
-            if (!props.list_id) setValue(value[0]);
-            if (!isNaN(props.list_id) && props.list_id !== 0) {
-              dispatch(
-                getAllListByDate({
-                  date: props.date,
-                  list_id: Number(props.list_id),
-                  email: value,
-                })
-              );
-              console.log(props.list_id);
-            } else if (isNaN(props.list_id) || props.list_id === 0) {
-              dispatch(
-                getAllListByDate({
-                  date: props.date,
-                  list_id: Number(value[1]),
-                  email: value[0],
-                })
-              );
+            if (listId) setValue(value);
+            if (!listId) setValue(value[0]);
+            if (listId && listId !== 0) {
+              dispatch(faceDetectionActions.searchEmail(value));
+            } else if (!listId || listId === 0) {
+              dispatch(faceDetectionActions.searchEmail(value[0]));
               dispatch(faceDetectionActions.selectList(Number(value[1])));
             }
           }}
           defaultActiveFirstOption
           trigger="click"
-          
         >
           <Input
             allowClear={{
               clearIcon: (
                 <CloseOutlined
                   onClick={() => {
-                    dispatch(
-                      getAllListByDate({
-                        date: props.date,
-                        list_id: props.list_id,
-                      })
-                    );
+                    dispatch(faceDetectionActions.clearSearch());
                   }}
                 />
               ),
@@ -114,7 +94,7 @@ const Search = (props) => {
             size="default"
             placeholder="search email..."
             prefix={<UserOutlined />}
-            enterbutton='true'
+            enterbutton="true"
           />
         </AutoComplete>
       </ConfigProvider>

@@ -10,3 +10,5 @@ const pool = mysql
     database: process.env.MYSQL_DATABASE,
   }).promise()
 export default pool
+
+

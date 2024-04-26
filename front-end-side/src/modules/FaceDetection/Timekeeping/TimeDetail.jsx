@@ -4,13 +4,13 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTimeOut } from "../../../store/faceDetection/thunkAction";
 
-const TimeDetail = () => {
+const TimeDetail = (props) => {
   const [timeOut, setTimeOut] = useState('00:00:00');
   const { timeDetail, loading } = useSelector(
     (state) => state.FaceDetectionService
   );
   const dispatch = useDispatch()
-
+  console.log(timeDetail);
   const checkTimeOut = () => {
     if (timeDetail?.check_out === "00:00") {
       return false;
@@ -29,7 +29,7 @@ const TimeDetail = () => {
       stream_id: timeDetail?.stream_id,
       va_id: timeDetail?.va_id,
       gender: timeDetail?.gender,
-      created_at: '2024-03-18 ' + timeOut
+      created_at: props.date + timeOut
     }
     dispatch(updateTimeOut(data))
   }

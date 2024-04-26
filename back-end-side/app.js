@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import userRoute from "./router/user.js";
 import faceDetectionRoute from "./router/faceDetection.js";
+import notificationRoute from "./router/notification.js"
 import morgan from "morgan";
 import bodyParser from "body-parser";
 import { app, server } from "./socket/socket.js";
@@ -26,6 +27,7 @@ app.use((req, res, next) => {
 
 app.use("/user", userRoute);
 app.use("/faceDetection", faceDetectionRoute);
+app.use("/notification", notificationRoute)
 app.use((req, res, next) => {
   const error = new Error("Not found");
   error.status = 404;

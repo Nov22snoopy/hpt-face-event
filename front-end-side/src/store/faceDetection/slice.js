@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
-  addList,
+  getAllCamera,
   getAllFaceDetection,
   getAllListByDate,
   getAllListByMail,
@@ -27,8 +27,8 @@ const initialState = {
   searchEmail: null,
   listFace: null,
   selectedList: null,
-  listId:null,
-  
+  listId: null,
+  cameraList: null,
 };
 
 export const { reducer: faceDetectionReducer, actions: faceDetectionActions } =
@@ -37,21 +37,24 @@ export const { reducer: faceDetectionReducer, actions: faceDetectionActions } =
     initialState,
     reducers: {
       //select list face
-      selectList:(state,actions)=>{
-        state.listId = actions.payload
+      selectList: (state, actions) => {
+        state.listId = actions.payload;
       },
-      clearSelect:(state, actions)=>{
-        state.listId = null
+      clearSelect: (state, actions) => {
+        state.listId = null;
       },
-
-      //search email
+      //search by email
+      searchEmail: (state, actions) => {
+        state.searchEmail = actions.payload;
+      },
+      //clear search by email
       clearSearch: (state, actions) => {
         state.searchEmail = null;
       },
       //off List
-      // offListL: (state, actions) => {
-      //   state.offList = actions.payload
-      // }
+      offList: (state, actions) => {
+        state.offList.push(actions.payload);
+      },
     },
     extraReducers: (builder) => {
       builder
@@ -102,13 +105,6 @@ export const { reducer: faceDetectionReducer, actions: faceDetectionActions } =
         //get all list by date
         .addCase(getAllListByDate.fulfilled, (state, actions) => {
           state.allListByDate = actions.payload;
-          state.loading = true;
-        })
-        .addCase(getAllListByDate.pending, (state, actions) => {
-          state.loading = false;
-        })
-        .addCase(getAllListByDate.rejected, (state, actions) => {
-          state.loading = true;
         })
         //get time check in check out detail
         .addCase(getTimeDetail.fulfilled, (state, actions) => {
@@ -137,17 +133,16 @@ export const { reducer: faceDetectionReducer, actions: faceDetectionActions } =
         })
         //get all list item
         .addCase(getAllListByMail.fulfilled, (state, actions) => {
-          state.allList = actions.payload?.slice(0,10);
+          state.allList = actions.payload?.slice(0, 10);
         })
         //get list face
-        .addCase(getListFace.fulfilled, (state, actions)=>{
-          state.listFace = actions.payload
+        .addCase(getListFace.fulfilled, (state, actions) => {
+          state.listFace = actions.payload;
         })
-        .addCase(addList.pending, (state, actions)=>{
-          state.updating = false
-        })
-        .addCase(addList.fulfilled, (state,actions)=>{
-          state.updating = true
-        })
+
+        //get all camera
+        .addCase(getAllCamera.fulfilled, (state, actions) => {
+          state.cameraList = actions.payload;
+        });
     },
   });

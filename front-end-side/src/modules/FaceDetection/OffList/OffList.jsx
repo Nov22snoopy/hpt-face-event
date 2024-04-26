@@ -6,24 +6,16 @@ import moment from "moment";
 import faceImage from "../../../assests/img/user-img.jpg";
 import "./offList.css";
 import { io } from "socket.io-client";
-import { socketListener } from "../../../store/faceDetection/listenerSocket";
 const socket = io("http://localhost:8080");
 const OffList = () => {
-  const [newList ,setNewList] = useState()
-  const { offList, updating } = useSelector(
-    (state) => state.FaceDetectionService
-  );
+  const [newList, setNewList] = useState();
+  const { offList } = useSelector((state) => state.FaceDetectionService);
   const dispatch = useDispatch();
   //Dispatch action get up list from store//
   //************************************* */
   useEffect(() => {
     dispatch(getOffList());
-  }, [dispatch, newList]);
-  useEffect(()=>{},[
-    socket.on('addList', (newList)=>{
-      setNewList(newList)
-    })
-  ],[newList])
+  }, [dispatch]);
   //Data for table//
   //************************************* */
   const columns = [

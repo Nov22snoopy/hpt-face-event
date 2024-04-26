@@ -9,6 +9,9 @@ import IndexPage from "../modules/indexPage/IndexPage";
 import Chart from "../modules/FaceDetection/Chart/Chart";
 import Timekeeping from "../modules/FaceDetection/Timekeeping/Timekeeping";
 import AddList from "../modules/FaceDetection/AddList/AddList";
+import NotificationList from "../modules/FaceDetection/Noctification/NocManagament/NotificationList";
+import Notification from "../modules/FaceDetection/Noctification/Notification";
+import NotificationManagement from "../modules/FaceDetection/Noctification/NocManagament/NotificationManagement";
 const Router = () => {
   const element = useRoutes([
     {
@@ -47,6 +50,20 @@ const Router = () => {
             {
               path: "/faceDetection/addList",
               element: <AddList/>
+            },
+            {
+              path: '/faceDetection/notification',
+              element: <Notification/>,
+              children: [
+                {
+                  path: '/faceDetection/notification/list',
+                  element: <NotificationList/>
+                },
+                {
+                  path: '/faceDetection/notification/management',
+                  element: <NotificationManagement/>
+                }
+              ]
             }
           ],
         },

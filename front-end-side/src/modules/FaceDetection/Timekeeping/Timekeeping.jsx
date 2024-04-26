@@ -10,50 +10,35 @@ import TimeDetail from "./TimeDetail";
 import dayjs from "dayjs";
 import Search from "../../../component/search/Search";
 import SelectList from "../../../component/selectList/SelectList";
+import moment from "moment";
 const Timekeeping = () => {
-  const [date, setDate] = useState("2024-03-18");
+  const currentDate = new Date().toDateString();
+  const today = moment(dayjs(currentDate)).format("YYYY-MM-DD");
+  const [date, setDate] = useState(today);
   const [modalOpen, setModalOpen] = useState(false);
-  const { allListByDate, updating, listId } = useSelector(
+  const { allListByDate, listId, searchEmail } = useSelector(
     (state) => state.FaceDetectionService
   );
   const dispatch = useDispatch();
 
-
   //set intial data for table
   useEffect(() => {
-    dispatch(getAllListByDate({ date: date, list_id:listId }));
+    if (!listId || listId === 0) {
+      dispatch(getAllListByDate({ date: date }));
+    } else if (listId && listId !== 0 && !searchEmail) {
+      dispatch(getAllListByDate({ date: date, list_id: listId }));
+    } else if (listId && searchEmail) {
+      dispatch(
+        getAllListByDate({ date: date, email: searchEmail, list_id: listId })
+      );
+    }
     setModalOpen(false);
-  }, [dispatch, date, updating, listId]);
-  
-  //set data after selecting list face
-  // const tableData = []
-  // useMemo(() => {
-  //   if (listSelected) {
-  //     for (let i = 0; i < allListByDate?.length; i++) {
-  //       if (allListByDate[i].list_id === Number(listSelected)) {
-  //         tableData.push(allListByDate[i]);
-  //       }
-  //     }
-  //   }
-  // }, [listSelected, allListByDate, tableData]);
-
-  // //set data after searching email
-  // const data = [];
-  // useMemo(() => {
-  //   if (searchEmail && tableData.length >= 1) {
-  //     for (let i = 0; i < tableData?.length; i++) {
-  //       if (tableData[i].comment.indexOf(searchEmail) !== -1) {
-  //         data.push(tableData[i]);
-  //       }
-  //     }
-  //   }
-  // }, [searchEmail, tableData, data]);
+  }, [dispatch, date, listId, searchEmail]);
   // set date
   //******* */
   const onChange = (d, dateString) => {
     setDate(dateString);
   };
-
   // set collumn for table
   //******************* */
   const columns = [
@@ -245,11 +230,11 @@ const Timekeeping = () => {
   return (
     <div className="container">
       <div className="date-picker flex justify-between  my-10">
-      <div className="select-list">
+        <div className="select-list">
           <SelectList date={date} />
         </div>
         <div className="search">
-          <Search date = {date} list_id={listId} />
+          <Search date={date} list_id={listId} />
         </div>
         <div className="time-picker w-fit">
           <ConfigProvider
@@ -272,7 +257,7 @@ const Timekeeping = () => {
                 backgroundColor: "rgb(42 43 47)",
                 color: "rgb(108 114 147)",
               }}
-              defaultValue={dayjs("2024-03-18")}
+              defaultValue={dayjs(currentDate)}
               onChange={onChange}
             />
           </ConfigProvider>
@@ -325,7 +310,7 @@ const Timekeeping = () => {
         }}
         footer={null}
       >
-        <TimeDetail />
+        <TimeDetail date={date} />
       </Modal>
     </div>
   );

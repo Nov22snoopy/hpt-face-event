@@ -4,7 +4,8 @@ import {
   VideoCameraOutlined,
   BarChartOutlined,
   CalculatorOutlined,
-  PlusOutlined
+  PlusOutlined,
+  AlertOutlined,
 } from "@ant-design/icons";
 import { ConfigProvider, Menu } from "antd";
 import React, { useState } from "react";
@@ -73,11 +74,7 @@ const SideMenu = () => {
             {
               key: "1",
               icon: <RadarChartOutlined />,
-              label: (
-                <div className="md:text-xl">
-                  Face Detection
-                </div>
-              ),
+              label: <div className="md:text-xl">Face Detection</div>,
               className: " my-3",
               children: [
                 {
@@ -125,7 +122,7 @@ const SideMenu = () => {
                   className: "sub-menu-item",
                 },
                 {
-                  key: '14',
+                  key: "14",
                   icon: <PlusOutlined />,
                   label: (
                     <div className="md:text-xl">
@@ -133,8 +130,42 @@ const SideMenu = () => {
                         Create new list
                       </NavLink>
                     </div>
-                  )
-                }
+                  ),
+                  className: "sub-menu-item",
+                },
+                {
+                  key: "15",
+                  icon: <AlertOutlined />,
+                  label: <div className="md:text-xl">Notification</div>,
+                  children: [
+                    {
+                      key: "101",
+                      icon: <AlertOutlined />,
+                      className: "sub-menu-item",
+                      label: (
+                        <div className="md:text-lg">
+                          <NavLink to={"/faceDetection/notification/list"}>
+                            Notification List
+                          </NavLink>
+                        </div>
+                      ),
+                    },
+                    {
+                      key: "102",
+                      icon: <AlertOutlined />,
+                      className: "sub-menu-item",
+                      label: (
+                        <div className="md:text-lg">
+                          <NavLink
+                            to={"/faceDetection/notification/management"}
+                          >
+                            Trigger management
+                          </NavLink>
+                        </div>
+                      ),
+                    },
+                  ],
+                },
               ],
             },
           ]}

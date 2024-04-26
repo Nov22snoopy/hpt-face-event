@@ -2,7 +2,6 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { faceDetectionService } from "../../service/FaceDetection.service";
 import { offListService } from "../../service/OffList.service";
 import { message } from "antd";
-import { socketClient } from "../..";
 
 export const getAllFaceDetection = createAsyncThunk(
   "/faceDetection",
@@ -100,9 +99,9 @@ export const getTimeDetail = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const res = await faceDetectionService.getTimeDetail(payload);
-      if (res.data.statusCode === 200) {
-        return [...res.data.content];
-      }
+        if (res.data.statusCode === 200) {
+          return res.data.content
+        }
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -128,7 +127,7 @@ export const updateTimeOut = createAsyncThunk(
 export const getListFace = createAsyncThunk('/faceDetection/allListFace', async(_,{rejectWithValue})=>{
   try {
     const res = await faceDetectionService.getListFace();
-    return [...res.data.content];
+    return res.data.content;
   } catch (error) {
     return rejectWithValue(error)
   }
@@ -139,7 +138,7 @@ export const getAllListByMail = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const res = await  faceDetectionService.getAllListByMail(payload.email, payload.list_id);
-      return [...res.data.content];
+      return res.data.content;
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -149,7 +148,7 @@ export const getAllListByMail = createAsyncThunk(
 export const searchByEmail = createAsyncThunk(`/faceDetection/searchItemByEmail`, async(payload, {rejectWithValue})=>{
   try {
     const res = await faceDetectionService.searchByEmail(payload);
-    return [...res.data.content];
+    return res.data.content;
   } catch (error) {
     return rejectWithValue(error)
   }
@@ -165,4 +164,18 @@ export const addList = createAsyncThunk('/faceDetection/addList', async(payload,
     return rejectWithValue(error)
   }
 })
+
+//get camera list
+export const getAllCamera = createAsyncThunk('/faceDetection/camera', async(_,{rejectWithValue})=>{
+  try {
+    const res = await faceDetectionService.getAllCamera();
+    if( res.data.statusCode === 200) {
+      return res.data.content
+    }
+  } catch (error) {
+    return rejectWithValue(error)
+  }
+})
+
+
 

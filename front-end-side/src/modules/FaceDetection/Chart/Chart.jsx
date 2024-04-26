@@ -4,8 +4,11 @@ import { ConfigProvider, DatePicker } from "antd";
 import dayjs from "dayjs";
 import OffListGenderChart from "./PipeChart/OffListGenderChart";
 import DoughnutChart from "./DoughnutChart/AttendanceChart";
+import moment from "moment";
 const Chart = () => {
-  const [date, setDate] = useState("2024-03-18");
+  const currentDate = new Date().toDateString();
+  const today = moment(dayjs(currentDate)).format("YYYY-MM-DD");
+  const [date, setDate] = useState(today);
   // get age in off list
   // useEffect(() => {
 
@@ -44,7 +47,7 @@ const Chart = () => {
               backgroundColor: "rgb(42 43 47)",
               color: "rgb(108 114 147)",
             }}
-            defaultValue={dayjs("2024-03-18")}
+            defaultValue={dayjs(currentDate)}
             onChange={onChange}
           />
         </ConfigProvider>
