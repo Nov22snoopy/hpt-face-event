@@ -25,11 +25,7 @@ const OffListGenderChart = (props) => {
   };
   const data = {
     labels: offListGender?.map((item) => {
-      if (item.gender === 1) {
-        return "Male";
-      } else if (item.gender === 0) {
-        return "Female";
-      };
+      return item.gender === 1? 'Male' :"Female"
     }),
     datasets: [
       {
@@ -42,11 +38,11 @@ const OffListGenderChart = (props) => {
     ],
   };
   return (
-    <div className="gender-chart w-full mx-auto md:h-[500px] mt-2">
+    <div className="gender-chart w-full mx-auto md:h-[500px]">
       <div>
         <h2 className="gender-chart-title md:pt-5 pt-4">Statistic Age Chart</h2>
       </div>
-      <Pie data={data} options={options} />
+      <Pie  data={data} options={options} />
     </div>
   );
 };

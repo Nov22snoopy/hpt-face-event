@@ -5,16 +5,22 @@ import { addList } from "../../../store/faceDetection/thunkAction";
 const AddList = () => {
   const dispatch = useDispatch()
   const onFinish = (value) => {
-    dispatch(addList(value))
+    const data = {
+      stream_id: Number(value.stream_id),
+      va_id: Number(value.va_id),
+      age: value.age,
+      gender: value.gender,
+      mask: value.mask
+    }
+    dispatch(addList(data))
   };
   return (
-    <div className="h-screen w-2/3 mx-auto">
+    <div className=" w-2/3 mx-auto" style={{minHeight: '100vh'}}> 
       <ConfigProvider
         theme={{
           components: {
             Form: {
               /* here is your component tokens */
-              labelColor: "white",
               labelFontSize: "24px",
             },
           },
@@ -68,7 +74,7 @@ const AddList = () => {
           <Form.Item
             label="mask"
             name="mask"
-            rules={[{ required: true, message: "Please select gender" }]}
+            rules={[{ required: true, message: "Please select mask" }]}
           >
             <Select
               placeholder="Select a option and change input text above"
@@ -78,7 +84,7 @@ const AddList = () => {
               <Select.Option value={0}>no mask</Select.Option>
             </Select>
           </Form.Item>
-          <Button type="primary" htmlType="submit">
+          <Button className="bg-[#1677ff]" type="primary" htmlType="submit">
             Add new list
           </Button>
         </Form>

@@ -61,21 +61,20 @@ const SideMenu = () => {
           components: {
             Menu: {
               /* here is your component tokens */
-              darkItemSelectedBg: "rgb(157 33 59)",
+              itemSelectedColor	: 'rgb(157 33 59)'
             },
           },
         }}
       >
         <Menu
-          theme="dark"
           mode="inline"
           defaultSelectedKeys={["1"]}
           items={[
             {
               key: "1",
               icon: <RadarChartOutlined />,
-              label: <div className="md:text-xl">Face Detection</div>,
-              className: " my-3",
+              label: <div className="md:text-xl ">Face Detection</div>,
+              className: " my-3 menu-item",
               children: [
                 {
                   key: "10",
@@ -173,7 +172,6 @@ const SideMenu = () => {
             flex: 1,
             minWidth: 10,
             margin: "auto",
-            backgroundColor: " rgb(42 43 47)",
           }}
         ></Menu>
       </ConfigProvider>

@@ -1,15 +1,15 @@
-import { TimePicker } from "antd";
+import { Button, TimePicker } from "antd";
 import dayjs from "dayjs";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTimeOut } from "../../../store/faceDetection/thunkAction";
 
 const TimeDetail = (props) => {
-  const [timeOut, setTimeOut] = useState('00:00:00');
+  const [timeOut, setTimeOut] = useState("00:00:00");
   const { timeDetail, loading } = useSelector(
     (state) => state.FaceDetectionService
   );
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   console.log(timeDetail);
   const checkTimeOut = () => {
     if (timeDetail?.check_out === "00:00") {
@@ -19,7 +19,7 @@ const TimeDetail = (props) => {
     }
   };
   const onChange = (time, timeString) => {
-    setTimeOut(timeString)
+    setTimeOut(timeString);
   };
 
   const updateCheckOut = () => {
@@ -29,10 +29,10 @@ const TimeDetail = (props) => {
       stream_id: timeDetail?.stream_id,
       va_id: timeDetail?.va_id,
       gender: timeDetail?.gender,
-      created_at: props.date + timeOut
-    }
-    dispatch(updateTimeOut(data))
-  }
+      created_at: props.date + timeOut,
+    };
+    dispatch(updateTimeOut(data));
+  };
   return (
     <div>
       <form
@@ -103,10 +103,19 @@ const TimeDetail = (props) => {
           </div>
         </div>
         <div className="mt-4 w-fit ml-auto ">
-          {checkTimeOut()? <div className=""> ''
-            
-          </div>:<button className="btn btn-primary" onClick={()=>{updateCheckOut()}} >Update</button>}
-          
+          {checkTimeOut() ? (
+            <div className=""> ''</div>
+          ) : (
+            <Button
+              type="primary"
+              className="bg-[#1677ff]"
+              onClick={() => {
+                updateCheckOut();
+              }}
+            >
+              Update
+            </Button>
+          )}
         </div>
       </form>
     </div>

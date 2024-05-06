@@ -40,6 +40,7 @@ export const { reducer: faceDetectionReducer, actions: faceDetectionActions } =
       selectList: (state, actions) => {
         state.listId = actions.payload;
       },
+      //clear select
       clearSelect: (state, actions) => {
         state.listId = null;
       },
@@ -51,10 +52,8 @@ export const { reducer: faceDetectionReducer, actions: faceDetectionActions } =
       clearSearch: (state, actions) => {
         state.searchEmail = null;
       },
-      //off List
-      offList: (state, actions) => {
-        state.offList.push(actions.payload);
-      },
+      //select date
+      
     },
     extraReducers: (builder) => {
       builder

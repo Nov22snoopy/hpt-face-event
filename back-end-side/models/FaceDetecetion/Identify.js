@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import pool from "../../config/db.js";
 
 export class Indentify {
   constructor(_stream_id, _va_id, _age,_gender, _mask){
@@ -18,7 +18,7 @@ export class Indentify {
     let s = d.getSeconds();
 
     let createdAt = `${yyyy}-${mm}-${dd} ${h}:${m}:${s} `;
-    let sql = `INSERT INTO videoanalytics.face_detections (stream_id, va_id, age, gender, mask ,created_at) VALUES (${this.stream_id}, ${this.va_id}, ${this.age}, ${this.gender}, ${this.mask}, '${createdAt}');`
+    let sql = `INSERT INTO videoanalytics.face_detections (stream_id, va_id, age, gender, mask ,created_at) VALUES (${this.stream_id}, ${this.va_id}, '${this.age}', ${this.gender}, ${this.mask}, '${createdAt}');`
     return pool.execute(sql)
   }
 }

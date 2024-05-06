@@ -33,7 +33,7 @@ export async function getOffListFace() {
       await pool.query(`SELECT videoanalytics.face_detections.id, videoanalytics.face_detections.face_image, videoanalytics.streams.name AS camera,  videoanalytics.face_detections.age, videoanalytics.face_detections.gender, videoanalytics.face_detections.mask, videoanalytics.face_detections.created_at 
       FROM videoanalytics.face_detections 
       INNER JOIN videoanalytics.streams 
-      WHERE videoanalytics.face_detections.stream_id =videoanalytics.streams.id 
+      ON videoanalytics.face_detections.stream_id = videoanalytics.streams.id 
       AND videoanalytics.face_detections.list_item_id is null ORDER BY id DESC;`);
     return data;
   } catch (error) {
@@ -304,7 +304,7 @@ export async function getAllListByMail(email, list_id) {
 //get all notification
 export const getAllNotification = async() => {
   try {
-    const [data] = await pool.query(`SELECT id, name, created_at, status FROM videoanalytics.warning_setting;`)
+    const [data] = await pool.query(`SELECT * FROM videoanalytics.warning_setting;`)
     return data
   } catch (error) {
     console.log(error);

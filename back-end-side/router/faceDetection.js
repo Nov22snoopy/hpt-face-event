@@ -17,10 +17,11 @@ import {
   getTimekeepingDetail,
 } from "../controller/index.js";
 import { io } from "../socket/socket.js";
-import { AllList } from "../models/ALlList.js";
-import { Indentify } from "../models/Identify.js";
-import { Notification } from "../models/Notification.js";
-
+import { AllList } from "../models/FaceDetecetion/ALlList.js";
+import { Indentify } from "../models/FaceDetecetion/Identify.js";
+import { NotifiTime } from "../models/FaceDetecetion/NotifiTime.js";
+import moment from "moment";
+import { NotifiCamera } from "../models/FaceDetecetion/NotifiCamera.js";
 const route = express.Router();
 // get all list
 //********* */
@@ -301,20 +302,151 @@ route.get("/allListByMail", async (req, res, next) => {
 
 // create new list
 route.post("/addList", async (req, res, next) => {
+  const streamId = req.body.stream_id;
+  const vaId = req.body.va_id;
+  const age = req.body.age;
+  const gender = req.body.gender;
+  const mask = req.body.mask;
+  const createAt = req.body.createAt;
   try {
-    const newList = new Indentify(
-      req.body.stream_id,
-      req.body.va_id,
-      req.body.age,
-      req.body.gender,
-      req.body.mask
-    );
-    newList.addList();
-    io.emit("addList", newList);
-    res.status(200).json({
-      message: "create new list successfully",
-      statusCode: res.statusCode,
-    });
+    const newList = new Indentify(streamId, vaId, age, gender, mask);
+    const notification = await getAllNotification();
+    const camera = "camera";
+    const startTime = "startTime";
+    const endTime = "endTime";
+    const date = "date";
+
+    newList
+      .addList()
+      .then(async () => {
+        let checkSetting = true;
+        //setting structure of notification
+        if (notification?.length > 0) {
+          for (let i = 0; i < notification.length; i++) {
+            const [camaras] = await NotifiCamera.findWarningCamera(
+              notification[i].id
+            );
+            notification[i][camera] = camaras?.map((cam) => cam.streamId);
+          }
+          for (let i = 0; i < notification.length; i++) {
+            const [times] = await NotifiTime.findWarningTime(
+              notification[i].id
+            );
+            notification[i][startTime] = times?.map((item) => item.start_time);
+            notification[i][endTime] = times?.map((item) => item.end_time);
+          }
+          for (let i = 0; i < notification.length; i++) {
+            const [dates] = await NotifiTime.findWarningDate(
+              notification[i].id
+            );
+            notification[i][date] = dates
+              ?.map((item) => item.day_of_week)
+              .toString();
+          }
+        }
+
+        // //check warning condition
+        notification?.forEach((item) => {
+          //check status
+          const checkStatus = item.status.toString("hex");
+          if (checkStatus === "00") {
+            checkSetting = false;
+            return;
+          } else {
+            checkSetting = true;
+          }
+          //check camera
+          const checkCamera = item.camera.find(
+            (element) => element === newList.stream_id
+          );
+          if (checkCamera === undefined) {
+            checkSetting = false;
+            return;
+          } else {
+            checkSetting = true;
+          }
+          //check mask
+          const checkMask = item.mask
+            .split(",")
+            .find((element) => element === newList.mask.toString());
+          if (checkMask === undefined) {
+            checkSetting = false;
+            return;
+          } else {
+            checkSetting = true;
+          }
+          //check gender
+          const checkGender = item.gender
+            .split(",")
+            .find((element) => element === newList.gender.toString());
+          if (checkGender === undefined) {
+            checkSetting = false;
+            return;
+          } else {
+            checkSetting = true;
+          }
+          //check age
+          const checkAge = item.age.split("-").map((x) => +x);
+          const newAge = newList.age.split("-").map((x) => +x);
+          if (newAge[0] <= checkAge[0] || newAge[1] >= checkAge[1]) {
+            checkSetting = false;
+            return;
+          } else if (newAge[0] >= checkAge[0] && newAge[1] <= checkAge[1]) {
+            checkSetting = true;
+          }
+          //check time
+          const createAt = moment().format("YYYY-MM-DD HH:mm:ss")
+          const hours = moment().format("HH:mm").split(":");
+          const hour = Number(hours[0]) * 60 + Number(hours[1]);
+          const [checkStartHours] = item.startTime.map((element) => {
+            return element.split(":");
+          });
+          const checkStartTime =
+            Number(checkStartHours[0]) * 60 + Number(checkStartHours[1]);
+          const [checkEndHours] = item.endTime.map((element) => {
+            return element.split(":");
+          });
+          const checkEndTime =
+            Number(checkEndHours[0]) * 60 + Number(checkEndHours[1]);
+          if (hour < checkStartTime || hour > checkEndTime) {
+            checkSetting = false;
+            return;
+          } else if (hour >= checkStartTime && hour <= checkEndTime) {
+            checkSetting = true;
+          }
+
+          // check date
+          const date = moment().day();
+          const checkDate = item.date
+            .split(",")
+            .find((day) => Number(day) === date);
+          if (checkDate === undefined) {
+            checkSetting = false;
+            return;
+          } else {
+            checkSetting = true;
+          }
+          //check warning
+          if (checkSetting) {
+            console.log(item.name);
+            console.log(newList);
+            io.emit("warning", {
+              check: checkSetting,
+              object: newList,
+              notification: { notifiId: item.id, notifiName: item.name, notifiTime: createAt },
+            });
+          }
+        });
+        io.emit("addList", newList);
+        res.status(200).json({
+          message: "create new list successfully",
+          content: newList,
+          statusCode: res.statusCode,
+        });
+      })
+      .catch((error) => {
+        res.status(500).json({ message: error.message });
+      });
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -322,7 +454,6 @@ route.post("/addList", async (req, res, next) => {
     next(error);
   }
 });
-
 
 //get all camera
 route.get("/camera", async (req, res, next) => {
@@ -340,8 +471,5 @@ route.get("/camera", async (req, res, next) => {
     next(error);
   }
 });
-
-
-
 
 export default route;

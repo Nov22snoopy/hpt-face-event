@@ -82,11 +82,11 @@ const OffListAgeChart = (props) => {
     ],
   };
   return (
-    <div className="age-chart w-full mx-auto mt-2">
-      <div>
+    <div className="age-chart w-full py-2 mx-auto mt-2">
+      <div >
         <h2 className="age-chart-title">Statistic Age Chart</h2>
       </div>
-      <Bar height={500} width={700} options={options} data={data} />
+      <Bar options={options} data={data} />
     </div>
   );
 };

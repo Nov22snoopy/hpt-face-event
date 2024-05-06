@@ -3,6 +3,7 @@ import { connectSocket } from "./thunkAction"
 
 const initialState = {
   connectStatus:"",
+  socket: null
 }
 export const { reducer: socketReducer, actions: socketAction} = createSlice({
   name: 'socket',
@@ -12,8 +13,9 @@ export const { reducer: socketReducer, actions: socketAction} = createSlice({
   },
   extraReducers:(buidler) => {
     buidler
-    .addCase(connectSocket.fulfilled, (state)=>{
+    .addCase(connectSocket.fulfilled, (state, actions)=>{
       state.connectStatus ='connected'
+      state.socket =  actions.payload
     })
   }
 })

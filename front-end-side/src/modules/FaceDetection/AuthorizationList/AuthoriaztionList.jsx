@@ -7,7 +7,6 @@ import Loading from "../../../component/Loading";
 import { ConfigProvider, Pagination } from "antd";
 import userImage from "../../../assests/img/user-img.jpg";
 import SkeletonImage from "antd/es/skeleton/Image";
-import { socketClient } from "../../..";
 const AuthoriaztionList = () => {
   const [page1, setPage1] = useState(0);
   const [page2, setPage2] = useState(12);
@@ -84,7 +83,7 @@ const AuthoriaztionList = () => {
                 <div>Camera: {user.camera}</div>
                 <div>Match Percentage: {user.confidence}%</div>
               </div>
-              <div className="col-4">
+              <div className="col-4 p-0">
                 <div>List: {user.list_face}</div>
                 <div>Mask: null</div>
                 <div>Age: {user.age}</div>
@@ -102,20 +101,17 @@ const AuthoriaztionList = () => {
       {loading ? (
         <div className="container mx-auto">
           <div className="row">{faceDetectionRender(page1, page2)}</div>
-          <div className="my-5 ">
+          <div className="my-3 flex justify-end">
             <ConfigProvider
               theme={{
                 components: {
                   Pagination: {
-                    itemActiveBg: "grey",
-                    itemInputBg: "grey",
-                    colorText: "white",
                   },
                 },
               }}
             >
               <Pagination
-                className="mx-auto md:w-1/4 w-1/2 text-white "
+                className=""
                 size="default "
                 total={faceDetection?.length}
                 pageSize={10}

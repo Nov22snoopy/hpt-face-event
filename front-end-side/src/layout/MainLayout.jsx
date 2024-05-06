@@ -19,9 +19,12 @@ const layoutStyle = {
 // set set style for siter
 //********************* */
 const siderStyle = {
-  lineHeight: "120px",
-  backgroundColor: "rgb(42 43 47)",
+  overflow: 'auto',
+  lineHeight: "100px",
+  backgroundColor: "white",
   height: "auto",
+  minHeight: "100vh",
+  boxShadow: "0 2px 4px rgba(0,0,20,.08),0 1px 2px rgba(0,0,20,.08)",
 };
 // set style for header
 //********************* */
@@ -29,24 +32,25 @@ const headerStyle = {
   height: 64,
   paddingInline: 48,
   lineHeight: "64px",
-  backgroundColor: "rgb(42 43 47)",
+  backgroundColor: "white",
   padding: "10px 20px",
   boxShadow: "0 2px 4px rgba(0,0,20,.08),0 1px 2px rgba(0,0,20,.08)",
 };
 // set style for content
 //********************* */
 const contentStyle = {
-  backgroundColor: " black",
+  backgroundColor: " #f1f5f9",
+
 };
 // set style for footer
 //********************* */
 const footerStyle = {
-  backgroundColor: "rgb(42 43 47)",
+  backgroundColor: "white",
 };
 // set set style for drawer
 //********************* */
 const drawerStyles = {
-  backgroundColor: "rgb(42 43 47)",
+  minHeight: "100vh",
 };
 const MainPage = () => {
   const { collapse } = useSelector((state) => state.SideMenu);
@@ -81,28 +85,33 @@ const MainPage = () => {
       {window.addEventListener("resize", setWindow)}
       <Layout style={layoutStyle}>
         {sideMenu || windowDefault() ? (
-          <Sider
-            style={siderStyle}
-            width={250}
-            trigger={null}
-            collapsible
-            collapsed={collapse}
-          >
-            <SideMenu />
-          </Sider>
+          <Affix offsetTop={0}>
+            <Sider
+              style={siderStyle}
+              width={250}
+              trigger={null}
+              collapsible
+              collapsed={collapse}
+            >
+              <SideMenu />
+            </Sider>
+          </Affix>
         ) : (
-          <Drawer
-            title={<div className="drawer-header"></div>}
-            style={drawerStyles}
-            width={220}
-            open={collapse}
-            placement="left"
-            onClose={() => {
-              dispatch(sideMenuAction.closeSideMenu());
-            }}
-          >
-            <SideMenu />
-          </Drawer>
+          <Affix offsetTop={0}>
+            <Drawer
+              title={<div className="drawer-header"></div>}
+              style={drawerStyles}
+              closeIcon={null}
+              width='auto'
+              open={collapse}
+              placement="left"
+              onClose={() => {
+                dispatch(sideMenuAction.closeSideMenu());
+              }}
+            >
+              <SideMenu />
+            </Drawer>
+          </Affix>
         )}
         <Layout>
           <Affix offsetTop={0}>

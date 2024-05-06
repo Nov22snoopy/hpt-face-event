@@ -7,8 +7,8 @@ const FaceDetection = () => {
   //********************* */
   return (
     <div className=" mt-4 pt-5 mb-2 ">
-      <div className=" text-white md:mb-0 mb-3 flex justify-between items-center">
-        <div className="face-detection-header md:text-2xl text-lg ">
+      <div className=" text-white md:mb-0 mb-3 flex justify-start items-center">
+        <div className="face-detection-header md:text-xl text-lg ">
           <h1>Face Detection</h1>
         </div>
         {/* <div className="grid md:grid-cols-4 grid-cols-2 justify-center text-center">

@@ -1,12 +1,14 @@
-import React from 'react'
-import  "./../../assests/styles/mainFooter/mainFooter.css"
-import logo from "../../assests/img/favicon_hpt.png"
+import React from "react";
+import "./../../assests/styles/mainFooter/mainFooter.css";
 const MainFooter = () => {
   return (
-      <div className='footer'>
-        <img src={logo} width={'100px'} height={'100px'} alt="logo" />
-      </div>
-  )
-}
+    <div
+      className="footer text-center text-lg font-medium"
+      style={{ color: "rgb(108 114 147)" }}
+    >
+      HPT KNOWING IT ©2024 CREATE BY HSV
+    </div>
+  );
+};
 
-export default MainFooter
+export default MainFooter;

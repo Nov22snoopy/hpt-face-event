@@ -15,7 +15,13 @@ const OffList = () => {
   //************************************* */
   useEffect(() => {
     dispatch(getOffList());
-  }, [dispatch]);
+  }, [dispatch, newList]);
+  //socket
+  useEffect(() => {
+    socket.on("addList", (value) => {
+      setNewList(value);
+    });
+  });
   //Data for table//
   //************************************* */
   const columns = [
@@ -27,7 +33,7 @@ const OffList = () => {
       key: "image",
       render: (_, { id }) => (
         <div key={id}>
-          <img src={faceImage} className="size-28" alt="face_img" />
+          <img src={faceImage} className="size-32" alt="face_img" />
         </div>
       ),
       //column Camera//
@@ -103,20 +109,10 @@ const OffList = () => {
       <ConfigProvider
         theme={{
           components: {
-            Pagination: {
-              itemActiveBg: "grey",
-              itemInputBg: "grey",
-              colorText: "white",
-            },
-            Table: {
-              headerColor: "white",
-              headerSplitColor: "rgb(42 43 47)",
-              borderColor: "rgb(108 114 147)",
-              fontFamily: '"Roboto, sans-serif"',
-            },
+            Pagination: {},
+            Table: {},
           },
           token: {
-            colorBgContainer: "rgb(42 43 47)",
             colorText: "rgb(108 114 147)",
             fontSize: "18px",
             fontWeightStrong: "24px",
@@ -128,8 +124,10 @@ const OffList = () => {
           rowKey={(record) => record.id}
           columns={columns}
           style={{
-            backgroundColor: "rgb(42 43 47)",
             borderRadius: "10px",
+          }}
+          scroll={{
+            y: 800
           }}
         />
       </ConfigProvider>

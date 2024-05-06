@@ -5,12 +5,11 @@ import {
   getTimeDetail,
 } from "../../../store/faceDetection/thunkAction";
 import faceImage from "../../../assests/img/user-img.jpg";
-import { ConfigProvider, DatePicker, Modal, Table, Tag } from "antd";
+import { ConfigProvider, Modal, Table, Tag } from "antd";
 import TimeDetail from "./TimeDetail";
 import dayjs from "dayjs";
-import Search from "../../../component/search/Search";
-import SelectList from "../../../component/selectList/SelectList";
 import moment from "moment";
+import FormSearchTimekeeping from "../../FormSearch/FormSearchTimekeeping";
 const Timekeeping = () => {
   const currentDate = new Date().toDateString();
   const today = moment(dayjs(currentDate)).format("YYYY-MM-DD");
@@ -36,9 +35,6 @@ const Timekeeping = () => {
   }, [dispatch, date, listId, searchEmail]);
   // set date
   //******* */
-  const onChange = (d, dateString) => {
-    setDate(dateString);
-  };
   // set collumn for table
   //******************* */
   const columns = [
@@ -211,6 +207,7 @@ const Timekeeping = () => {
       title: "Update time",
       dataIndex: "udpate_time",
       key: "update_time",
+      fixed: 'right',
       render: (_, { id }) => (
         <div key={id}>
           <button
@@ -229,61 +226,25 @@ const Timekeeping = () => {
   // console.log(allListByDate);
   return (
     <div className="container">
-      <div className="date-picker flex justify-between  my-10">
-        <div className="select-list">
-          <SelectList date={date} />
-        </div>
-        <div className="search">
-          <Search date={date} list_id={listId} />
-        </div>
-        <div className="time-picker w-fit">
-          <ConfigProvider
-            theme={{
-              components: {
-                DatePicker: {
-                  /* here is your component tokens */
-                  cellHoverBg: "white",
-                },
-              },
-              token: {
-                colorBgElevated: "rgb(42 43 47)",
-                colorIcon: "rgb(108 114 147)",
-                colorText: "rgb(108 114 147)",
-              },
-            }}
-          >
-            <DatePicker
-              style={{
-                backgroundColor: "rgb(42 43 47)",
-                color: "rgb(108 114 147)",
-              }}
-              defaultValue={dayjs(currentDate)}
-              onChange={onChange}
-            />
-          </ConfigProvider>
-        </div>
+      <div className="form-search">
+        <FormSearchTimekeeping date={date} today={currentDate} setDate={setDate}/>
       </div>
+      <hr className="my-3" />
       {/* Table */}
       <ConfigProvider
         theme={{
           components: {
             Pagination: {
-              itemActiveBg: "grey",
-              itemInputBg: "grey",
-              colorText: "white",
             },
             Table: {
-              headerColor: "white",
-              headerSplitColor: "rgb(42 43 47)",
               borderColor: "rgb(108 114 147)",
               fontFamily: '"Roboto, sans-serif"',
+              fontSize: '16px',
             },
           },
           token: {
-            colorBgContainer: "rgb(42 43 47)",
             colorText: "rgb(108 114 147)",
-            fontSize: "18px",
-            fontWeightStrong: "24px",
+            fontWeightStrong: "20px",
           },
         }}
       >
@@ -292,11 +253,11 @@ const Timekeeping = () => {
           rowKey={(record) => record.id}
           columns={columns}
           style={{
-            backgroundColor: "rgb(42 43 47)",
             borderRadius: "10px",
           }}
           scroll={{
             x: 1300,
+            y: 750
           }}
         />
       </ConfigProvider>

@@ -1,4 +1,5 @@
 import {
+  DownOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UserOutlined,
@@ -19,7 +20,7 @@ const MainHeader = () => {
       <div className="search d-flex justify-content-center px-0">
         {collapse ? (
           <button
-            className="sideBtn btn mb-3 bg-[rgb(96 121 143)]"
+            className="sideBtn btn mb-3"
             onClick={() => {
               dispatch(sideMenuAction.closeSideMenu());
             }}
@@ -44,7 +45,7 @@ const MainHeader = () => {
             <UserOutlined style={{ fontSize: "24px" }} />
           </span>
           <span>
-            <h3 className="md:text-xl sm:text-lg user-name">{user?.email}</h3>
+            <h3 className="md:text-xl sm:text-lg user-name">{user?.email}  <span className="text-sm"><DownOutlined /></span></h3>
           </span>
         </div>
 

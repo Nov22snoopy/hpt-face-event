@@ -1,5 +1,5 @@
 .side-menu-header {
-  height: 96px;
+  height: 40px;
   margin: 16px;
   /* background: rgba(255, 255, 255, 0.2); */
   border-radius: 6px;
@@ -9,12 +9,15 @@
   background-position: center;
   cursor: pointer;
 }
+.menu-item a {
+  text-decoration: none;
+}
 .sub-menu-item {
   position: relative;
   z-index: 3;
   display: block;
 }
-.sub-menu-item::after {
+/* .sub-menu-item::after {
   content: "";
   position: absolute;
   top: 0;
@@ -29,8 +32,8 @@
   transform: scaleX(0);
   transform-origin: left;
   transition:  all 0.5s;
-}
-.sub-menu-item:hover.sub-menu-item::after {
+} */
+/* .sub-menu-item:hover.sub-menu-item::after {
   opacity: 1;
   transform: scaleX(1);
-}
+} */

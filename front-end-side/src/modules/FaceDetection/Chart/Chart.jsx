@@ -32,11 +32,9 @@ const Chart = () => {
             components: {
               DatePicker: {
                 /* here is your component tokens */
-                cellHoverBg: "white",
               },
             },
             token: {
-              colorBgElevated: "rgb(42 43 47)",
               colorIcon: "rgb(108 114 147)",
               colorText: "rgb(108 114 147)",
             },
@@ -44,7 +42,6 @@ const Chart = () => {
         >
           <DatePicker
             style={{
-              backgroundColor: "rgb(42 43 47)",
               color: "rgb(108 114 147)",
             }}
             defaultValue={dayjs(currentDate)}
@@ -54,18 +51,17 @@ const Chart = () => {
       </div>
       {/*Render Chart  */}
       {/* ************ */}
-      <div className="row mt-3">
-        <div className="chart-item col-lg-6 col-12 ">
+      <div className="row mt-3" >
+        <div className="chart-item col-12 " >
           <OffListAgeChart data={onChange()} />
-        </div>
-
-        <div className="chart-item col-lg-6 col-12 ">
-          <OffListGenderChart data={onChange()} />
         </div>
       </div>
       <div className="row mt-3">
         <div className="chart-item col-lg-6 col-12 ">
           <DoughnutChart data={onChange()} />
+        </div>
+        <div className="chart-item col-lg-6 col-12 ">
+          <OffListGenderChart data={onChange()} />
         </div>
       </div>
     </div>

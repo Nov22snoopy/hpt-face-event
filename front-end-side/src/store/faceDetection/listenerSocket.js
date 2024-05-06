@@ -5,5 +5,4 @@ export const socketListener = (socket)=>{
   socket.on("addList", (payload)=>{
     store.dispatch(faceDetectionActions.offList(payload))
   })
-  console.log('jaja');
 }

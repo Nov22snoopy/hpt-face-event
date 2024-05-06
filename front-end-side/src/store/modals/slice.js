@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  notificationForm: false
+  notificationForm: false,
+  warningFaceModal: false
 };
 
 export const {reducer: modalReducer, actions: modalActions} = createSlice({
@@ -15,6 +16,14 @@ export const {reducer: modalReducer, actions: modalActions} = createSlice({
     //close notification form
     closeForm: (state, action) => {
       state.notificationForm = false
+    },
+    //open warning face modal
+    openWanringFaceModal:(state,action)=> {
+      state.warningFaceModal = action.payload
+    },
+     //clos warning face modal
+     closeWanringFaceModal:(state)=> {
+      state.warningFaceModal = false
     }
   },
   

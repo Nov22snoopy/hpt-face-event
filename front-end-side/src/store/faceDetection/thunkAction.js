@@ -153,7 +153,7 @@ export const searchByEmail = createAsyncThunk(`/faceDetection/searchItemByEmail`
     return rejectWithValue(error)
   }
 })
-
+// add list
 export const addList = createAsyncThunk('/faceDetection/addList', async(payload, {rejectWithValue})=>{
   try {
     const res = await faceDetectionService.addList(payload)

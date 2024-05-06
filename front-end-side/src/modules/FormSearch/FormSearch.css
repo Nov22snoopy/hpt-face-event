@@ -1,0 +1,59 @@
+.Container__Form {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 10px;
+  align-items: center;
+  gap: 10px;
+}
+
+.Content__Form > input,
+.Content__Form > div {
+  height: 35px;
+  width: 200px;
+  margin-bottom: 4px;
+  min-width: 200px;
+}
+
+.Content__Form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.formSearch__title {
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 30px;
+  color: black;
+  max-width: 200px;
+}
+
+.Content__Form__tabs {
+  display: flex;
+  gap: 5px;
+  width: 380px !important;
+  padding: 0 10px;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+}
+.Content__Form__tabs div {
+  width: 80px;
+  text-align: center;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+}
+
+.Content__Form__tabs > .active {
+  border-top: 2px solid #8F8B8B;
+  border-left: 2px solid #8F8B8B;
+  border-right: 2px solid #8F8B8B;
+  border-radius: 0px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  background-color: white;
+  color: #1677FF;
+}

@@ -2,8 +2,13 @@ import http from "../constant/api";
 
 export const notificationService = {
   getAllNotification: () => http.get('/notification'),
-  getNotificationDetail: (query) => http.get(`/notification/${query}`),
+  getNotificationDetail: (query) => http.get(`/notification/notificationDetail?id=${query}`),
   createNewNotification: (payload) => http.post(`/notification/createNotification`, payload),
-  updateNotification: (payload) => http.put('/notification/notificationUpdate', payload)
-
+  updateNotification: (query,payload) => http.put(`/notification/updateNotification?id=${query}`, payload),
+  deleteNotification: (query) => http.delete(`/notification/deleteNotification?id=${query}`),
+  updateStatus: (query, payload) => http.put(`/notification/updateStatus?id=${query}`,payload),
+  createEvent: (payload) => http.post('/notification/createEvent', payload),
+  getAllNotifiEvent: () => http.get(`/notification/getAllNotifiEvent`),
+  getNotifiEventDetail: (query) => http.get(`/notification/getNotifiEventDetail?id=${query}`),
+  deleteNotifiEvent: (query) => http.delete(`/notification/deleteNotifiEvent?id=${query}`)
 }

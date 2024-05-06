@@ -8,29 +8,31 @@ import { faceDetectionActions } from "../../store/faceDetection/slice";
 const Search = (props) => {
   const [value, setValue] = useState();
   const searchList = useRef(null);
-  const { allList, listId, searchEmail } = useSelector((state) => state.FaceDetectionService);
+  const { allList, listId, searchEmail } = useSelector(
+    (state) => state.FaceDetectionService
+  );
   const dispatch = useDispatch();
-  useEffect(()=>{
-    if (!searchEmail){
-      setValue('')
+  useEffect(() => {
+    if (!searchEmail) {
+      setValue("");
     }
-  },[searchEmail])
+  }, [searchEmail]);
   return (
-    <div>
+    <>
       <ConfigProvider
         theme={{
           components: {
             Select: {
               /* here is your component tokens */
-              optionActiveBg: "red",
             },
           },
         }}
       >
         <AutoComplete
+          size="default"
           popupMatchSelectWidth={252}
           style={{
-            width: 300,
+            width: 250,
           }}
           value={value}
           options={allList?.map((item, index) => {
@@ -40,8 +42,8 @@ const Search = (props) => {
               return {
                 label: (
                   <div className="flex justify-between">
-                    <span className="font-semibold">{item.email}</span>{" "}
-                    <span className="font-semibold">{item.list}</span>
+                    <span className="font-medium">{item.email}</span>{" "}
+                    <span className="font-medium">{item.list}</span>
                   </div>
                 ),
                 value: [item.email, item.list_id],
@@ -82,6 +84,7 @@ const Search = (props) => {
           trigger="click"
         >
           <Input
+            size="large"
             allowClear={{
               clearIcon: (
                 <CloseOutlined
@@ -91,14 +94,13 @@ const Search = (props) => {
                 />
               ),
             }}
-            size="default"
             placeholder="search email..."
             prefix={<UserOutlined />}
             enterbutton="true"
           />
         </AutoComplete>
       </ConfigProvider>
-    </div>
+    </>
   );
 };
 

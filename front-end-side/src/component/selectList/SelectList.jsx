@@ -29,15 +29,14 @@ const SelectList = (props) => {
     }
   };
   return (
-    <div>
+    <>
       {setOption()}
       <Select
-       
         size="default"
         placeholder="Select group"
         placement="bottomLeft"
         value={listId?listId:null}
-        style={{ width: "120px" }}
+        style={{ width: "200px" }}
         options={options}
         onSelect={(value, index) => {
           if (value === 0) value = null
@@ -46,7 +45,7 @@ const SelectList = (props) => {
           console.log(value);
         }}
       />
-    </div>
+    </>
   );
 };
 

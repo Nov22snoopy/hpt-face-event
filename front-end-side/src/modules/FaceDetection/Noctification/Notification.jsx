@@ -4,34 +4,29 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import CreateNotification from "./NocManagament/CreateNotification";
 import { useDispatch, useSelector } from "react-redux";
-import { faceDetectionActions } from "../../../store/faceDetection/slice";
 import { modalActions } from "../../../store/modals/slice";
-
+import { notificationAction } from "../../../store/notification/slice";
+import "./notification.css"
 const Notification = () => {
   const {notificationForm} = useSelector(state => state.ModalService)
   const dispatch = useDispatch()
  
   return (
     <div className="container">
-      <div>
+      <div className="flex justify-end my-0">
         <button
           onClick={() => {
             dispatch(modalActions.openForm());
           }}
-          className="w-fit rounded-full overflow-hidden"
+          className="w-fit rounded-full overflow-hidden "
         >
           <PlusCircleOutlined
-            twoToneColor="#eb2f96"
-            style={{
-              fontSize: "50px",
-              color: "white",
-              backgroundColor: "green",
-              overflow: "hidden",
-            }}
+            className="modal-btn"
+            
           />
         </button>{" "}
       </div>
-      <div className="mt-4">
+      <div className="mt-1">
         <Outlet />
       </div>
       <div className="">
@@ -41,9 +36,10 @@ const Notification = () => {
           open={notificationForm}
           onCancel={() => {
             dispatch(modalActions.closeForm());
+            dispatch(notificationAction.clearNotifiDetail())
           }}
           style={{
-            minWidth: '1000px'
+            minWidth: '850px'
           }}
         >
           <CreateNotification/>

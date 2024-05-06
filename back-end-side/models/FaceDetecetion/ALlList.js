@@ -1,4 +1,4 @@
-import pool from "../config/db.js"
+import pool from "../../config/db.js";
 
 export class AllList {
   constructor(_list_id, _list_item_id, _stream_id,  _va_id, _gender, _created_at)  {
