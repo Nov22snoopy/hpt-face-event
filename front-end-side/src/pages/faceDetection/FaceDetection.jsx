@@ -6,7 +6,7 @@ const FaceDetection = () => {
   // render ui component
   //********************* */
   return (
-    <div className=" mt-4 pt-5 mb-2 ">
+    <div className="mt-[-24px]  pt-5 mb-2 ">
       <div className=" text-white md:mb-0 mb-3 flex justify-start items-center">
         <div className="face-detection-header md:text-xl text-lg ">
           <h1>Face Detection</h1>

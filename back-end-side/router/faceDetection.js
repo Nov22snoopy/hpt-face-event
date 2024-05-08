@@ -26,8 +26,10 @@ const route = express.Router();
 // get all list
 //********* */
 route.get("/", async (req, res, next) => {
+  const email = req.query.email;
+  const listId = req.query.listId
   try {
-    const data = await getFaceDetection();
+    const data = await getFaceDetection(email, listId);
     res.status(200).json({
       message: "Get face detection data successfully",
       content: data,
@@ -42,8 +44,10 @@ route.get("/", async (req, res, next) => {
 //get off list
 //********* */
 route.get("/offList", async (req, res, next) => {
+  const date = req.query.date
+  const streamId = req.query.streamId
   try {
-    const data = await getOffListFace();
+    const data = await getOffListFace(date, streamId);
     return res.status(200).json({
       message: "get off list successfully",
       content: data,

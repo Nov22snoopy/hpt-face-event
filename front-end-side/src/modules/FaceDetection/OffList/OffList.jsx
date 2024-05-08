@@ -6,16 +6,19 @@ import moment from "moment";
 import faceImage from "../../../assests/img/user-img.jpg";
 import "./offList.css";
 import { io } from "socket.io-client";
+import FormSearchOutList from "../../FormSearch/FormSearchOutList";
 const socket = io("http://localhost:8080");
 const OffList = () => {
   const [newList, setNewList] = useState();
+  const [date, setDate] = useState('')
+  const [streamId, setStreamId] = useState([])
   const { offList } = useSelector((state) => state.FaceDetectionService);
   const dispatch = useDispatch();
   //Dispatch action get up list from store//
   //************************************* */
   useEffect(() => {
-    dispatch(getOffList());
-  }, [dispatch, newList]);
+    dispatch(getOffList({date:date, streamId:streamId}));
+  }, [dispatch, newList, date, streamId]);
   //socket
   useEffect(() => {
     socket.on("addList", (value) => {
@@ -84,8 +87,13 @@ const OffList = () => {
     {
       title: "Mask",
       dataIndex: "mask, id",
+      width: 150,
       key: "mask",
-      render: (_, { mask, id }) => <div key={id}>{mask.data}</div>,
+      render: (_, { mask, id }) => (
+        <div key={id}>
+          {mask?.data.toString("hex") === "1" ? "Mask" : "No mask"}
+        </div>
+      ),
     },
     //column Create_at//
     //**************/
@@ -106,6 +114,9 @@ const OffList = () => {
   ];
   return (
     <div className="container off-list">
+      <div className="form-search">
+        <FormSearchOutList setDate={setDate} setStreamId= {setStreamId}/>
+      </div>
       <ConfigProvider
         theme={{
           components: {
@@ -127,7 +138,7 @@ const OffList = () => {
             borderRadius: "10px",
           }}
           scroll={{
-            y: 800
+            y: 800,
           }}
         />
       </ConfigProvider>

@@ -16,11 +16,12 @@ export class NotifiEvent {
     let sql = `DELETE FROM videoanalytics.warning_event WHERE id = ${id} and id > 0;`;
     return pool.execute(sql);
   }
-  static getAllNotifiEvent() {
+  static getAllNotifiEvent(name, streamId, timeId) {
     let sql = `SELECT videoanalytics.warning_event.id , videoanalytics.warning_setting.name, videoanalytics.streams.name as camera, videoanalytics.warning_event.created_at
     FROM videoanalytics.warning_event 
     INNER JOIN videoanalytics.warning_setting ON videoanalytics.warning_event.notifiId = videoanalytics.warning_setting.id
-    INNER JOIN videoanalytics.streams ON videoanalytics.warning_event.streamId = videoanalytics.streams.id;`;
+    INNER JOIN videoanalytics.streams ON videoanalytics.warning_event.streamId = videoanalytics.streams.id
+    WHERE warning_setting.name like '%${name}%' ${streamId?.length > 0? `AND streamId in (${streamId})` :''} ${timeId?.length > 0? `AND dayofweek(warning_event.created_at) in (${timeId})` :''};`;
     return pool.execute(sql);
   }
   static findNotifiEvent(id) {

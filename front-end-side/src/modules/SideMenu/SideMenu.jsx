@@ -11,6 +11,7 @@ import { ConfigProvider, Menu } from "antd";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { NavLink, Navigate, useNavigate } from "react-router-dom";
+
 import "./sideMenu.css";
 const SideMenu = () => {
   const [header, setHeader] = useState(Boolean);
@@ -61,7 +62,7 @@ const SideMenu = () => {
           components: {
             Menu: {
               /* here is your component tokens */
-              itemSelectedColor	: 'rgb(157 33 59)'
+              itemSelectedColor: "#A0153E",
             },
           },
         }}
@@ -72,7 +73,7 @@ const SideMenu = () => {
           items={[
             {
               key: "1",
-              icon: <RadarChartOutlined />,
+              icon: <RadarChartOutlined/>,
               label: <div className="md:text-xl ">Face Detection</div>,
               className: " my-3 menu-item",
               children: [
@@ -82,7 +83,7 @@ const SideMenu = () => {
                   label: (
                     <div className="md:text-xl">
                       <NavLink to={"/faceDetection/authorizationList"}>
-                        all List
+                        In List
                       </NavLink>
                     </div>
                   ),
@@ -93,7 +94,7 @@ const SideMenu = () => {
                   icon: <VideoCameraOutlined />,
                   label: (
                     <div className="md:text-xl">
-                      <NavLink to={"/faceDetection/offList"}>Off List</NavLink>
+                      <NavLink to={"/faceDetection/offList"}>Out List</NavLink>
                     </div>
                   ),
                   className: "sub-menu-item",
@@ -126,7 +127,7 @@ const SideMenu = () => {
                   label: (
                     <div className="md:text-xl">
                       <NavLink to={"/faceDetection/addList"}>
-                        Create new list
+                        Test Trigger
                       </NavLink>
                     </div>
                   ),
@@ -144,7 +145,7 @@ const SideMenu = () => {
                       label: (
                         <div className="md:text-lg">
                           <NavLink to={"/faceDetection/notification/list"}>
-                            Notification List
+                            Trigger List
                           </NavLink>
                         </div>
                       ),
@@ -158,7 +159,7 @@ const SideMenu = () => {
                           <NavLink
                             to={"/faceDetection/notification/management"}
                           >
-                            Trigger management
+                            Trigger Management
                           </NavLink>
                         </div>
                       ),
@@ -176,6 +177,7 @@ const SideMenu = () => {
         ></Menu>
       </ConfigProvider>
     </div>
+
   );
 };
 

@@ -3,9 +3,9 @@ import { notificationService } from "../../service/notification.Service";
 import { message } from "antd";
 
 //get all notification
-export const getAllNotification = createAsyncThunk('/notification', async(_,{rejectWithValue})=>{
+export const getAllNotification = createAsyncThunk('/notification', async(query,{rejectWithValue})=>{
   try {
-    const res = await notificationService.getAllNotification();
+    const res = await notificationService.getAllNotification(query);
     return res.data.content;
   } catch (error) {
     return rejectWithValue(error)
@@ -85,9 +85,9 @@ export const createEvent = createAsyncThunk('/notification/createEvent', async(p
 })
 
 //get all notification face event
-export const getAllNotifiEvent = createAsyncThunk('/notification/getallNotifiEvent', async(_, {rejectWithValue})=>{
+export const getAllNotifiEvent = createAsyncThunk('/notification/getallNotifiEvent', async(query, {rejectWithValue})=>{
   try {
-    const res = await notificationService.getAllNotifiEvent();
+    const res = await notificationService.getAllNotifiEvent(query);
     if(res.data.statusCode === 200) {
       return res.data.content
     }

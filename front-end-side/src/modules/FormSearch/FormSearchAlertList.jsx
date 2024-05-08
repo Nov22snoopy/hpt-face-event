@@ -10,7 +10,7 @@ import "./FormSearch.css";
 import { useDispatch, useSelector } from "react-redux";
 import { modalActions } from "../../store/modals/slice";
 import { getAllCamera } from "../../store/faceDetection/thunkAction";
-const FormSearchAlertManagement = (props) => {
+const FormSearchAlertList = (props) => {
   const { cameraList } = useSelector((state) => state.FaceDetectionService);
   const dispatch = useDispatch();
   const { setName, setStreamId, setTimeId } = props;
@@ -21,59 +21,56 @@ const FormSearchAlertManagement = (props) => {
   // schedule option
   const schedulesOption = [
     {
-      value: 0,
+      value: 1,
       label: "Sunday",
       disabled: false,
     },
     {
-      value: 1,
+      value: 2,
       label: "Monsday",
       disabled: false,
     },
     {
-      value: 2,
+      value: 3,
       label: "Tuesday",
       disabled: false,
     },
     {
-      value: 3,
+      value: 4,
       label: "Wedsnday",
       disabled: false,
     },
     {
-      value: 4,
+      value: 5,
       label: "Thursday",
       disabled: false,
     },
     {
-      value: 5,
+      value: 6,
       label: "Friday",
       disabled: false,
     },
     {
-      value: 6,
+      value: 7,
       label: "Saturday",
       disabled: false,
     },
   ];
   return (
     <div className="Container__Form">
-      <h2 className="formSearch__title">Trigger Management</h2>
+      <h2 className="formSearch__title">Trigger List</h2>
       <div className="Content__Form">
         {/* input search email */}
         <Input
-        className="w-1/3"
+          className="w-1/3"
           allowClear={{
-            clearIcon: (
-              <CloseOutlined
-                
-              />
-            ),
+            clearIcon: <CloseOutlined />,
           }}
-          
           placeholder="search email..."
           prefix={<UserOutlined />}
-          onChange={(e)=>{setName(e.target.value);}}
+          onChange={(e) => {
+            setName(e.target.value);
+          }}
         />
 
         {/* Select camera */}
@@ -94,7 +91,9 @@ const FormSearchAlertManagement = (props) => {
           options={cameraList?.map((item) => {
             return { value: item.id, label: item.name };
           })}
-          onChange={(value)=>{setStreamId(value)}}
+          onChange={(value) => {
+            setStreamId(value);
+          }}
         />
         {/* Select date */}
         <Select
@@ -113,7 +112,9 @@ const FormSearchAlertManagement = (props) => {
               .localeCompare((optionB?.label ?? "").toLowerCase())
           }
           options={schedulesOption}
-          onChange={(value)=>{setTimeId(value.sort().toString())}}
+          onChange={(value) => {
+            setTimeId(value);
+          }}
         />
         <Button
           title="Add trigger"
@@ -133,4 +134,4 @@ const FormSearchAlertManagement = (props) => {
   );
 };
 
-export default FormSearchAlertManagement;
+export default FormSearchAlertList;

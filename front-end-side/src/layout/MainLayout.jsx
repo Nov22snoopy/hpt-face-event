@@ -14,7 +14,8 @@ import MainFooter from "../modules/mainPages/MainFooter";
 //********************* */
 const layoutStyle = {
   overflow: "hidden",
-  backgroundColor: "rgb(96 121 143)",
+  minHeight: "100vh",
+  padding: '5px'
 };
 // set set style for siter
 //********************* */
@@ -25,16 +26,19 @@ const siderStyle = {
   height: "auto",
   minHeight: "100vh",
   boxShadow: "0 2px 4px rgba(0,0,20,.08),0 1px 2px rgba(0,0,20,.08)",
+  borderRadius: '20px'
 };
 // set style for header
 //********************* */
 const headerStyle = {
+  margin: 'auto',
   height: 64,
   paddingInline: 48,
   lineHeight: "64px",
   backgroundColor: "white",
   padding: "10px 20px",
   boxShadow: "0 2px 4px rgba(0,0,20,.08),0 1px 2px rgba(0,0,20,.08)",
+  borderRadius: '15px'
 };
 // set style for content
 //********************* */
@@ -46,6 +50,7 @@ const contentStyle = {
 //********************* */
 const footerStyle = {
   backgroundColor: "white",
+  borderRadius: '15px'
 };
 // set set style for drawer
 //********************* */
@@ -113,7 +118,7 @@ const MainPage = () => {
             </Drawer>
           </Affix>
         )}
-        <Layout>
+        <Layout className="container">
           <Affix offsetTop={0}>
             <Header style={headerStyle}>
               <MainHeader />

@@ -7,16 +7,19 @@ import Loading from "../../../component/Loading";
 import { ConfigProvider, Pagination } from "antd";
 import userImage from "../../../assests/img/user-img.jpg";
 import SkeletonImage from "antd/es/skeleton/Image";
+import FormSearchInList from "../../FormSearch/FormSearchInList";
 const AuthoriaztionList = () => {
   const [page1, setPage1] = useState(0);
+  const [email, setEmail] = useState('');
+  const [listId, setListId] = useState([])
   const [page2, setPage2] = useState(12);
   const { faceDetection, loading } = useSelector(
     (state) => state.FaceDetectionService
   );
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getAllFaceDetection());
-  }, [dispatch]);
+    dispatch(getAllFaceDetection({email:email, listId: listId}));
+  }, [dispatch, email, listId]);
   // function set gender
   //********************* */
   const genderDetect = (gender) => {
@@ -77,17 +80,37 @@ const AuthoriaztionList = () => {
             <div className="row text-md">
               <div className="col-8">
                 {" "}
-                <div>Name: {user.name}</div>
-                <div>Email: {user.comment}</div>
-                <div>Date: {dataFormat(user.created_at)}</div>
-                <div>Camera: {user.camera}</div>
-                <div>Match Percentage: {user.confidence}%</div>
+                <div>
+                  {" "}
+                  <span className="font-extrabold">Name: </span> {user.name}
+                </div>
+                <div>
+                  <span className="font-extrabold">Email: </span>
+                  {user.comment}
+                </div>
+                <div>
+                  <span className="font-extrabold">Date: </span>{" "}
+                  {dataFormat(user.created_at)}
+                </div>
+                <div>
+                  <span className="font-extrabold">Camera: </span> {user.camera}
+                </div>
+                <div><span className="font-extrabold">Match: </span>{user.confidence}%</div>
               </div>
               <div className="col-4 p-0">
-                <div>List: {user.list_face}</div>
-                <div>Mask: null</div>
-                <div>Age: {user.age}</div>
-                <div>Gender: {genderDetect(user.gender)}</div>
+                <div>
+                  <span className="font-extrabold">List: </span> {user.list_face}
+                </div>
+                <div>
+                  <span className="font-extrabold">Mask: </span> null
+                </div>
+                <div>
+                  <span className="font-extrabold">Age: </span> {user.age}
+                </div>
+                <div>
+                  <span className="font-bold">Gender: </span>{" "}
+                  {genderDetect(user.gender)}
+                </div>
               </div>
             </div>
           </div>
@@ -97,7 +120,9 @@ const AuthoriaztionList = () => {
   };
   return (
     <div className="">
-      <div className="face-detec-header"></div>
+      <div className="form-search">
+        <FormSearchInList setEmail={setEmail} setListId={setListId}/>
+      </div>
       {loading ? (
         <div className="container mx-auto">
           <div className="row">{faceDetectionRender(page1, page2)}</div>
@@ -105,8 +130,7 @@ const AuthoriaztionList = () => {
             <ConfigProvider
               theme={{
                 components: {
-                  Pagination: {
-                  },
+                  Pagination: {},
                 },
               }}
             >

@@ -5,35 +5,43 @@ import { NotifiTime } from "../models/FaceDetecetion/NotifiTime.js";
 import moment from "moment";
 import { NotifiCamera } from "../models/FaceDetecetion/NotifiCamera.js";
 import { NotifiEvent } from "../models/FaceDetecetion/NotifiEvent.js";
-import e from "express";
 const route = express.Router();
 
 //get all notification
 route.get("/", async (req, res, next) => {
+  const name = req.query.name;
+  const streamId = req.query.streamId;
+  const timeId = req.query.timeId;
   try {
-    const data = await getAllNotification();
+    const data = await getAllNotification(name, streamId, timeId);
     const camera = "camera";
     const time = "time";
     const date = "date";
-
-    if (data?.length > 0) {
-      for (let i = 0; i < data.length; i++) {
-        const [camaras] = await NotifiCamera.findWarningCamera(data[i].id);
-        data[i][camera] = camaras?.map(item => item.streamId);
+    const result = [];
+    for (let i = 0; i < data?.length; i++) {
+      if (data[i]?.id !== data[i + 1]?.id) {
+        result.push(data[i]);
       }
-      for (let i = 0; i < data.length; i++) {
-        const [times] = await NotifiTime.findWarningTime(data[i].id);
-        data[i][time] = times;
+    }
+    if (result?.length > 0) {
+      for (let i = 0; i < result.length; i++) {
+        const [camaras] = await NotifiCamera.findWarningCamera(result[i].id);
+        result[i][camera] = camaras?.map((item) => item.streamId);
       }
-      for (let i = 0; i < data.length; i++) {
-        const [dates] = await NotifiTime.findWarningDate(data[i].id);
-        data[i][date] = dates?.map(item => item.day_of_week);
+      for (let i = 0; i < result.length; i++) {
+        const [times] = await NotifiTime.findWarningTime(result[i].id);
+        result[i][time] = times;
+      }
+      for (let i = 0; i < result.length; i++) {
+        const [dates] = await NotifiTime.findWarningDate(result[i].id);
+        result[i][date] = dates?.map((item) => item.day_of_week);
       }
     }
 
+    // result.push( data?.find((item)=>item.name === findName))
     res.status(200).json({
       message: "get notification successfully",
-      content: data,
+      content: result,
       statusCode: res.statusCode,
     });
   } catch (error) {
@@ -95,10 +103,10 @@ route.post("/createNotification", async (req, res, next) => {
         .createNew()
         .then(async () => {
           const [findId] = await Notification.findName(name);
-          const notifiEvent = new NotifiCamera();
+          const notifiCamera = new NotifiCamera();
           if (cameras !== undefined) {
             for (let i = 0; i < cameras.length; i++) {
-              notifiEvent.settingCamera(findId[0].id, cameras[i]);
+              notifiCamera.settingCamera(findId[0].id, cameras[i]);
             }
           }
 
@@ -109,7 +117,7 @@ route.post("/createNotification", async (req, res, next) => {
                 findId[0].id,
                 moment(time[i].start_time).format("HH:mm:ss"),
                 moment(time[i].end_time).format("HH:mm:ss"),
-                time[i].schedule.toString()
+                time[i].schedule.sort().toString()
               );
             }
           }
@@ -164,7 +172,7 @@ route.put("/updateNotification", async (req, res, next) => {
                 id,
                 moment(time[i].start_time).format("HH:mm:ss"),
                 moment(time[i].end_time).format("HH:mm:ss"),
-                time[i].schedule.toString()
+                time[i].schedule.sort().toString()
               );
             }
           });
@@ -277,8 +285,11 @@ route.post("/createEvent", async (req, res, next) => {
 
 // get all event
 route.get("/getAllNotifiEvent", async (req, res, next) => {
+  const name = req.query.name;
+  const streamId = req.query.streamId;
+  const timeId = req.query.timeId;
   try {
-    const [data] = await NotifiEvent.getAllNotifiEvent();
+    const [data] = await NotifiEvent.getAllNotifiEvent(name, streamId, timeId);
     res.status(200).json({
       message: "get all notification event succcessfully",
       content: data,
@@ -293,8 +304,8 @@ route.get("/getAllNotifiEvent", async (req, res, next) => {
 });
 
 //get warning event detail
-route.get('/getNotifiEventDetail',async (req, res, next)=>{
-  const id = req.query.id
+route.get("/getNotifiEventDetail", async (req, res, next) => {
+  const id = req.query.id;
   try {
     const [data] = await NotifiEvent.findNotifiEvent(id);
     res.status(200).json({
@@ -308,13 +319,13 @@ route.get('/getNotifiEventDetail',async (req, res, next)=>{
     });
     next(error);
   }
-})
+});
 
 //delete notification event
-route.delete('/deleteNotifiEvent', async(req, res, next)=>{
-  const id = req.query.id
+route.delete("/deleteNotifiEvent", async (req, res, next) => {
+  const id = req.query.id;
   try {
-    await NotifiEvent.deleteEvent(id)
+    await NotifiEvent.deleteEvent(id);
     res.status(200).json({
       message: "get event detail succcessfully",
       statusCode: res.statusCode,
@@ -325,6 +336,6 @@ route.delete('/deleteNotifiEvent', async(req, res, next)=>{
     });
     next(error);
   }
-})
+});
 
 export default route;

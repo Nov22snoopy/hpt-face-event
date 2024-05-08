@@ -5,9 +5,9 @@ import { message } from "antd";
 
 export const getAllFaceDetection = createAsyncThunk(
   "/faceDetection",
-  async (_, { rejectWithValue }) => {
+  async (query, { rejectWithValue }) => {
     try {
-      const res = await faceDetectionService.getAllFaceDetection();
+      const res = await faceDetectionService.getAllFaceDetection(query);
       return [...res.data.content];
     } catch (error) {
       return rejectWithValue(error);
@@ -17,9 +17,9 @@ export const getAllFaceDetection = createAsyncThunk(
 
 export const getOffList = createAsyncThunk(
   "/faceDetection/offList",
-  async (_, { rejectWithValue }) => {
+  async (query, { rejectWithValue }) => {
     try {
-      const res = await offListService.getOffList();
+      const res = await offListService.getOffList(query);
       return res.data.content
     } catch (error) {
       return rejectWithValue(error);

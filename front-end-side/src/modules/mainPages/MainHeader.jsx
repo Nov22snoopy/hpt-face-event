@@ -41,7 +41,7 @@ const MainHeader = () => {
       <div className="header-user md:px-3 px-1">
         <div className="flex justify-center items-center">
           {" "}
-          <span className="user-icon mr-3">
+          <span className="user-icon mr-1">
             <UserOutlined style={{ fontSize: "24px" }} />
           </span>
           <span>

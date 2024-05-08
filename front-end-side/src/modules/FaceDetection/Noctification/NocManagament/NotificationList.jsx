@@ -1,5 +1,5 @@
 import { ConfigProvider, Modal, Table } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import userImage from "../../../../assests/img/user-img.jpg";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -15,18 +15,24 @@ import {
 } from "@ant-design/icons";
 import { modalActions } from "../../../../store/modals/slice";
 import { notificationAction } from "../../../../store/notification/slice";
+import FormSearchAlertList from "../../../FormSearch/FormSearchAlertList";
 
 const NotificationList = () => {
   const { allNotifiEvent, updateNotification } = useSelector(
     (state) => state.NotificationService
   );
+  const [name, setName] = useState("");
+  const [streamId, setStreamId] = useState([]);
+  const [timeId, setTimeId] = useState("");
   const dispatch = useDispatch();
   const { confirm } = Modal;
 
   //get notification event
   useEffect(() => {
-    dispatch(getAllNotifiEvent());
-  }, [dispatch, updateNotification]);
+    dispatch(
+      getAllNotifiEvent({ name: name, streamId: streamId, timeId: timeId })
+    );
+  }, [dispatch, updateNotification, name, streamId, timeId]);
   //open event detail modal
   const openEventDetail = (id) => {
     dispatch(getNotifiEventDetail(id));
@@ -40,8 +46,8 @@ const NotificationList = () => {
       width: 500,
       icon: <ExclamationCircleFilled />,
       content: `Do you want to delete this notification`,
-      okButtonProps:{
-        style: {backgroundColor: '#1677ff'}
+      okButtonProps: {
+        style: { backgroundColor: "#1677ff" },
       },
       onOk() {
         dispatch(deleteNotifiEvent(id));
@@ -114,6 +120,13 @@ const NotificationList = () => {
   ];
   return (
     <div>
+      <div className="form-search">
+        <FormSearchAlertList
+          setName={setName}
+          setStreamId={setStreamId}
+          setTimeId={setTimeId}
+        />
+      </div>
       <ConfigProvider
         theme={{
           components: {

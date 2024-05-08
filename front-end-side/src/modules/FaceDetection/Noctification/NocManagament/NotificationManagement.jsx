@@ -1,5 +1,5 @@
 import { Table, Tag, Modal, ConfigProvider } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import {
@@ -16,17 +16,21 @@ import { modalActions } from "../../../../store/modals/slice";
 import DayOfWeek from "../../../../component/DayOfWeek/DayOfWeek";
 import { notificationAction } from "../../../../store/notification/slice";
 import SwitchCheck from "../../../../component/Switch/SwitchCheck";
+import FormSearchAlertManagement from "../../../FormSearch/FormSearchAlertManagement";
 
 const NotificationManagement = () => {
   const { notification, updateNotification } = useSelector(
     (state) => state.NotificationService
   );
+  const [name, setName] = useState('')
+  const [streamId, setStreamId] = useState([])
+  const [timeId, setTimeId] = useState('')
   const dispatch = useDispatch();
   const { confirm } = Modal;
   //display all notifcation
   useEffect(() => {
-    dispatch(getAllNotification());
-  }, [dispatch, updateNotification]);
+    dispatch(getAllNotification({name:name, streamId: streamId, timeId: timeId}));
+  }, [dispatch, updateNotification, name, streamId, timeId]);
 
   //open update notification form
   const openNotificationForm = (id) => {
@@ -41,8 +45,8 @@ const NotificationManagement = () => {
       width: 500,
       icon: <ExclamationCircleFilled />,
       content: `Do you want to delete this notification`,
-      okButtonProps:{
-        style: {backgroundColor: '#1677ff'}
+      okButtonProps: {
+        style: { backgroundColor: "#1677ff" },
       },
       onOk() {
         dispatch(deleteNotification(id));
@@ -53,7 +57,6 @@ const NotificationManagement = () => {
       },
     });
   };
-
   const collumns = [
     //notification name
     {
@@ -174,6 +177,13 @@ const NotificationManagement = () => {
   ];
   return (
     <div>
+      <div className="form_search">
+        <FormSearchAlertManagement
+        setName = {setName}
+        setStreamId = {setStreamId}
+        setTimeId = {setTimeId}
+        />
+      </div>
       <ConfigProvider
         theme={{
           components: {

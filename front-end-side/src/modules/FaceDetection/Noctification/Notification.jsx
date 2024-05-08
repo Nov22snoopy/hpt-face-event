@@ -1,4 +1,3 @@
-import { PlusCircleOutlined } from "@ant-design/icons";
 import { Modal } from "antd";
 import React from "react";
 import { Outlet } from "react-router-dom";
@@ -13,19 +12,6 @@ const Notification = () => {
  
   return (
     <div className="container">
-      <div className="flex justify-end my-0">
-        <button
-          onClick={() => {
-            dispatch(modalActions.openForm());
-          }}
-          className="w-fit rounded-full overflow-hidden "
-        >
-          <PlusCircleOutlined
-            className="modal-btn"
-            
-          />
-        </button>{" "}
-      </div>
       <div className="mt-1">
         <Outlet />
       </div>

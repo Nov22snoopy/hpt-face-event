@@ -17,7 +17,7 @@ export class NotifiCamera {
   }
   static findWarningCamera(id) {
     let sql = `SELECT streamId, videoanalytics.streams.name FROM videoanalytics.warning_camera INNER JOIN videoanalytics.streams ON videoanalytics.warning_camera.streamId = videoanalytics.streams.id
-                  WHERE notifiId = ${id};`;
+    WHERE notifiId = ${id}`;
     return pool.execute(sql);
   }
 }

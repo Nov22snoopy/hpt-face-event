@@ -1,11 +1,13 @@
 import { ExclamationCircleFilled } from "@ant-design/icons";
-import { Flex } from "antd";
+import { Button, Flex } from "antd";
 import React from "react";
 import userImage from "../../../../assests/img/user-img.jpg";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
+import { modalActions } from "../../../../store/modals/slice";
 
 const WarningModal = (props) => {
+  const dispatch = useDispatch()
   const { notifiEventDetail } = useSelector(
     (state) => state.NotificationService
   );
@@ -13,7 +15,7 @@ const WarningModal = (props) => {
   return (
     <>
       <div className="text-center">
-        <h1 className="text-xl font-bold">
+        <h1 className="text-xl font-bold text-red-600">
           <span className="mr-2">
             <ExclamationCircleFilled />
           </span>
@@ -82,6 +84,9 @@ const WarningModal = (props) => {
           </div>
         </div>
       </Flex>
+      <div className="close=modal text-center">
+        <Button danger type="" onClick={()=>{dispatch(modalActions.closeWanringFaceModal())}} className="w-3/4 text-lg">Close</Button>
+      </div>
     </>
   );
 };
