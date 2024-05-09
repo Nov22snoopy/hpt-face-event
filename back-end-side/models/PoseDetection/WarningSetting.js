@@ -18,28 +18,33 @@ export class WarningPoseSetting {
     return pool.execute(sql);
   }
   async updatePoseWarning(id) {
-    let sql = `UPDATE videoanalytics.pose_warning_setting SET poseType = '${this.poseType}', status = ${this.status} WHERE id = ${id}`
+    let sql = `UPDATE videoanalytics.pose_warning_setting SET poseType = '${this.poseType}', status = ${this.status} WHERE id = ${id}`;
     return pool.execute(sql);
   }
 
   async updatePoseStatus(id) {
-    let sql = `UPDATE videoanalytics.pose_warning_setting set status = ${this.status} WHERE id = ${id}`
-    return pool.execute(sql)
+    let sql = `UPDATE videoanalytics.pose_warning_setting set status = ${this.status} WHERE id = ${id}`;
+    return pool.execute(sql);
   }
   async deletePoseSetting(id) {
-    let sql = `DELETE FROM videoanalytics.pose_warning_setting WHERE id = ${id} `
-    return pool.execute(sql)
+    let sql = `DELETE FROM videoanalytics.pose_warning_setting WHERE id = ${id} `;
+    return pool.execute(sql);
   }
   static getPoseSetting(name, streamId, timeId) {
-    let sql = `SELECT pose_warning_setting.id, pose_warning_setting.poseType,pose_warning_setting.created_at, pose_warning_setting.status
-    FROM videoanalytics.pose_warning_setting
-    inner join pose_warning_camera ON pose_warning_setting.id = pose_warning_camera.poseId
-    inner join pose_warning_time ON pose_warning_setting.id = pose_warning_time.poseId
-    WHERE poseType like '%${name}%' ${
-      streamId?.length > 0 ? `AND streamId in (${streamId})` : ""
-    } and day_of_week like '%${timeId}%' ORDER BY id ASC
-    ;`;
-    return pool.execute(sql);
+    if (!name && !streamId && !timeId) {
+      let sql = `SELECT * FROM videoanalytics.pose_warning_setting;`;
+      return pool.execute(sql);
+    } else {
+      let sql = `SELECT pose_warning_setting.id, pose_warning_setting.poseType,pose_warning_setting.created_at, pose_warning_setting.status
+      FROM videoanalytics.pose_warning_setting
+      inner join pose_warning_camera ON pose_warning_setting.id = pose_warning_camera.poseId
+      inner join pose_warning_time ON pose_warning_setting.id = pose_warning_time.poseId
+      WHERE poseType like '%${name}%' ${
+        streamId?.length > 0 ? `AND streamId in (${streamId})` : ""
+      } and day_of_week like '%${timeId}%' ORDER BY id ASC
+      ;`;
+      return pool.execute(sql);
+    }
   }
 
   static findSetting(name) {
@@ -48,6 +53,6 @@ export class WarningPoseSetting {
   }
   static getPoseDetail(id) {
     let sql = `SELECT * FROM videoanalytics.pose_warning_setting WHERE videoanalytics.pose_warning_setting.id = ${id};`;
-    return pool.execute(sql)
+    return pool.execute(sql);
   }
 }

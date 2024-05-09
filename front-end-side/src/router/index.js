@@ -12,6 +12,9 @@ import AddList from "../modules/FaceDetection/AddList/AddList";
 import NotificationList from "../modules/FaceDetection/Noctification/NocManagament/NotificationList";
 import Notification from "../modules/FaceDetection/Noctification/Notification";
 import NotificationManagement from "../modules/FaceDetection/Noctification/NocManagament/NotificationManagement";
+import PoseDetection from "../modules/PoseDetection/PoseDetection";
+import PoseAlertList from "../modules/PoseDetection/PoseManagemet/PoseAlertList";
+import PoseAlertManagement from "../modules/PoseDetection/PoseManagemet/PoseAlertManagement";
 const Router = () => {
   const element = useRoutes([
     {
@@ -66,6 +69,20 @@ const Router = () => {
               ]
             }
           ],
+        },
+        {
+          path:"/poseDetection",
+          element: <PoseDetection/>,
+          children: [
+            {
+              path: "/poseDetection/poseAlertList",
+              element: <PoseAlertList/>
+            },
+            {
+              path: "/poseDetection/poseAlertManagement",
+              element: <PoseAlertManagement/>
+            },
+          ]
         },
         {
           path: "/profile",

@@ -27,7 +27,7 @@ const route = express.Router();
 //********* */
 route.get("/", async (req, res, next) => {
   const email = req.query.email;
-  const listId = req.query.listId
+  const listId = req.query.listId;
   try {
     const data = await getFaceDetection(email, listId);
     res.status(200).json({
@@ -44,8 +44,8 @@ route.get("/", async (req, res, next) => {
 //get off list
 //********* */
 route.get("/offList", async (req, res, next) => {
-  const date = req.query.date
-  const streamId = req.query.streamId
+  const date = req.query.date;
+  const streamId = req.query.streamId;
   try {
     const data = await getOffListFace(date, streamId);
     return res.status(200).json({
@@ -399,7 +399,7 @@ route.post("/addList", async (req, res, next) => {
             checkSetting = true;
           }
           //check time
-          const createAt = moment().format("YYYY-MM-DD HH:mm:ss")
+          const createAt = moment().format("YYYY-MM-DD HH:mm:ss");
           const hours = moment().format("HH:mm").split(":");
           const hour = Number(hours[0]) * 60 + Number(hours[1]);
           const [checkStartHours] = item.startTime.map((element) => {
@@ -437,7 +437,11 @@ route.post("/addList", async (req, res, next) => {
             io.emit("warning", {
               check: checkSetting,
               object: newList,
-              notification: { notifiId: item.id, notifiName: item.name, notifiTime: createAt },
+              notification: {
+                notifiId: item.id,
+                notifiName: item.name,
+                notifiTime: createAt,
+              },
             });
           }
         });

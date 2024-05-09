@@ -5,6 +5,7 @@ import { faceDetectionReducer } from "./faceDetection/slice";
 import { socketReducer } from "./socket/slice";
 import { modalReducer } from "./modals/slice";
 import { notificationReducer } from "./notification/slice";
+import { poseDetectionReducer } from "./poseDetection/slice";
 
 export const store = configureStore ({
   reducer:{
@@ -13,7 +14,8 @@ export const store = configureStore ({
     FaceDetectionService: faceDetectionReducer,
     SocketService: socketReducer,
     ModalService: modalReducer,
-    NotificationService: notificationReducer
+    NotificationService: notificationReducer,
+    PoseDetectionService: poseDetectionReducer
   },
   middleware: (getDefaultMiddeleware)=> 
     getDefaultMiddeleware({

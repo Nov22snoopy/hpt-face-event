@@ -14,8 +14,8 @@ import MainFooter from "../modules/mainPages/MainFooter";
 //********************* */
 const layoutStyle = {
   overflow: "hidden",
-  minHeight: "100vh",
-  padding: '5px'
+  padding: '5px',
+  minHeight: '100svh'
 };
 // set set style for siter
 //********************* */
@@ -24,7 +24,7 @@ const siderStyle = {
   lineHeight: "100px",
   backgroundColor: "white",
   height: "auto",
-  minHeight: "100vh",
+  minHeight: '100svh',
   boxShadow: "0 2px 4px rgba(0,0,20,.08),0 1px 2px rgba(0,0,20,.08)",
   borderRadius: '20px'
 };

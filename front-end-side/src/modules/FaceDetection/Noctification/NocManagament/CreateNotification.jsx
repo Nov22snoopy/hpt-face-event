@@ -479,7 +479,6 @@ const CreateNotification = () => {
               onClick={() => {
                 dispatch(modalActions.closeForm());
                 dispatch(notificationAction.clearNotifiDetail());
-                form.resetFields();
               }}
             >
               Cancel

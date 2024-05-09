@@ -8,12 +8,11 @@ import { Button, Input, Select } from "antd";
 import React, { useEffect } from "react";
 import "./FormSearch.css";
 import { useDispatch, useSelector } from "react-redux";
-import { modalActions } from "../../store/modals/slice";
 import { getAllCamera } from "../../store/faceDetection/thunkAction";
 const FormSearchAlertManagement = (props) => {
   const { cameraList } = useSelector((state) => state.FaceDetectionService);
-  const dispatch = useDispatch();
-  const { setName, setStreamId, setTimeId } = props;
+  const { setName, setStreamId, setTimeId, openModal } = props;
+  const dispatch = useDispatch()
   //get all camera
   useEffect(() => {
     dispatch(getAllCamera());
@@ -120,7 +119,7 @@ const FormSearchAlertManagement = (props) => {
           className="ButtonCustom AddBtn"
           icon={<PlusOutlined />}
           onClick={() => {
-            dispatch(modalActions.openForm());
+            openModal()
           }}
         />
         <Button

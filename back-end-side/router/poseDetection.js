@@ -2,6 +2,9 @@ import express from "express";
 import { WarningPoseSetting } from "../models/PoseDetection/WarningSetting.js";
 import { WarningPoseCamera } from "../models/PoseDetection/WarningPoseCamera.js";
 import { WarningPoseTime } from "../models/PoseDetection/WarningPoseTime.js";
+import moment from "moment";
+import { TestPoseTrigger } from "../models/PoseDetection/TestPoseWarningTrigger.js";
+import { io } from "../socket/socket.js";
 
 const route = express.Router();
 
@@ -28,8 +31,8 @@ route.get("/", async (req, res, next) => {
 
     if (result?.length > 0) {
       for (let i = 0; i < result.length; i++) {
-        const [camaras] = await WarningPoseCamera.findPoseCamera(result[i].id);
-        result[i][camera] = camaras?.map((item) => item.streamId);
+        const [cameras] = await WarningPoseCamera.findPoseCamera(result[i].id);
+        result[i][camera] = cameras?.map((item) => item.streamId);
       }
       for (let i = 0; i < result.length; i++) {
         const [times] = await WarningPoseTime.findPoseTime(result[i].id);
@@ -53,7 +56,7 @@ route.get("/", async (req, res, next) => {
 });
 
 //get pose warning detail
-route.get("/poseDetectionDetail", async (req, res, next) => {
+route.get("/getPoseDetectionDetail", async (req, res, next) => {
   const id = req.query.id;
   try {
     const [data] = await WarningPoseSetting.getPoseDetail(id);
@@ -111,9 +114,9 @@ route.post("/createPoseDetectionSetting", async (req, res, next) => {
             time?.forEach((element) => {
               poseTime.createPoseTime(
                 findPoseSetting[0].id,
-                element?.start_time,
-                element?.end_time,
-                element?.date.sort().toString()
+                moment(element?.start_time).format("HH:mm:ss"),
+                moment(element?.end_time).format("HH:mm:ss"),
+                element?.schedule.sort().toString()
               );
             });
           }
@@ -165,7 +168,7 @@ route.put("/updatePoseDetectionStatus", async (req, res, next) => {
 });
 
 //update pose warning
-route.put("/updatePoseDetection", async (req, res, next) => {
+route.put("/updatePoseDetectionSetting", async (req, res, next) => {
   const id = req.query.id;
   const poseType = req.body.poseType;
   const camera = req.body.camera;
@@ -190,9 +193,9 @@ route.put("/updatePoseDetection", async (req, res, next) => {
             time?.forEach((element) => {
               poseTime.createPoseTime(
                 id,
-                element?.start_time,
-                element?.end_time,
-                element?.date.sort().toString()
+                moment(element?.start_time).format("HH:mm:ss"),
+                moment(element?.end_time).format("HH:mm:ss"),
+                element?.schedule.sort().toString()
               );
             });
           });
@@ -216,7 +219,7 @@ route.put("/updatePoseDetection", async (req, res, next) => {
 });
 
 //delet pose warning
-route.delete("deletePoseDetection", async (req, res, next) => {
+route.delete("/deletePoseDetectionSetting", async (req, res, next) => {
   const id = req.query.id;
   try {
     const poseSetting = new WarningPoseSetting();
@@ -230,6 +233,131 @@ route.delete("deletePoseDetection", async (req, res, next) => {
         return res.status(200).json({
           message: "Delete pose warning setting successfully",
           statusCode: res.statusCode,
+        });
+      })
+      .catch((error) => {
+        res.status(500).json({
+          message: error.message,
+        });
+      });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+    next(error);
+  }
+});
+
+//text trigger
+route.post("/testTrigger", async (req, res, next) => {
+  const streamId = req.body.streamId;
+  const ruleType = req.body.ruleType;
+  try {
+    const test = new TestPoseTrigger(streamId, ruleType);
+    test
+      .createTestTrigger()
+      .then(async () => {
+        const [poseAlert] = await WarningPoseSetting.getPoseSetting();
+        const camera = "camera";
+        const date = "date";
+        const startTime = "startTime";
+        const endTime = "endTime";
+        if (poseAlert?.length > 0) {
+          for (let i = 0; i < poseAlert.length; i++) {
+            const [cameras] = await WarningPoseCamera.findPoseCamera(
+              poseAlert[i].id
+            );
+            poseAlert[i][camera] = cameras?.map((item) => item.streamId);
+          }
+          for (let i = 0; i < poseAlert.length; i++) {
+            const [times] = await WarningPoseTime.findPoseTime(poseAlert[i].id);
+            poseAlert[i][startTime] = times?.map((item) => item.start_time);
+            poseAlert[i][endTime] = times?.map((item) => item.end_time);
+          }
+
+          for (let i = 0; i < poseAlert.length; i++) {
+            const [dates] = await WarningPoseTime.findPoseDate(poseAlert[i].id);
+            poseAlert[i][date] = dates?.map((item) => item.day_of_week);
+          }
+        }
+        poseAlert?.forEach((item) => {
+          let check = true;
+          //check status
+          const checkStatus = item.status.toString("hex");
+          if (checkStatus === "00") {
+            check = false;
+            return;
+          } else {
+            check = true;
+          }
+          //check camera
+          const checkCamera = item.camera.find(
+            (element) => element === test.streamId
+          );
+          if (checkCamera === undefined) {
+            check = false;
+            return;
+          } else {
+            check = true;
+          }
+          //check rule
+          const checkRule = item.poseType.indexOf(
+            (element) => element === test.ruleType
+          );
+          if (checkRule !== -1) {
+            check = false;
+            return;
+          } else {
+            check = true;
+          }
+          //check time
+          const createAt = moment().format("YYYY-MM-DD HH:mm:ss");
+          const hours = moment().format("HH:mm").split(":");
+          const hour = Number(hours[0]) * 60 + Number(hours[1]);
+          const [checkStartHours] = item.startTime.map((element) => {
+            return element.split(":");
+          });
+          const checkStartTime =
+            Number(checkStartHours[0]) * 60 + Number(checkStartHours[1]);
+          const [checkEndHours] = item.endTime.map((element) => {
+            return element.split(":");
+          });
+          const checkEndTime =
+            Number(checkEndHours[0]) * 60 + Number(checkEndHours[1]);
+          if (hour < checkStartTime || hour > checkEndTime) {
+            check = false;
+            return;
+          } else if (hour >= checkStartTime && hour <= checkEndTime) {
+            check = true;
+          }
+          // check date
+          const date = moment().day();
+          const checkDate = item.date[0]
+            .split(",")
+            .find((day) => Number(day) === date);
+          if (checkDate === undefined) {
+            check = false;
+            console.log(check);
+            return;
+          } else {
+            check = true;
+          }
+          console.log(check);
+          if (check) {
+            console.log(item.id);
+            io.emit("warning", {
+              check: check,
+              object: null,
+              notification: {
+                notifiId: item.id,
+                notifiName: item.poseType,
+                notifiTime: createAt,
+              },
+            });
+          }
+        });
+        return res.status(200).json({
+          message: "create new test pose alert trigger",
         });
       })
       .catch((error) => {

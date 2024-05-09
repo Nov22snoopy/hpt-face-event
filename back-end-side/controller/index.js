@@ -352,3 +352,5 @@ export const getAllCamera = async () => {
     console.log(error);
   }
 };
+
+

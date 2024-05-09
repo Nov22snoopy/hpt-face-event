@@ -2,7 +2,6 @@ import { CheckOutlined } from "@ant-design/icons";
 import { Switch, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateStatus } from "../../store/notification/thunkAction";
 
 const SwitchCheck = (props) => {
   const { updateNotification } = useSelector(
@@ -40,7 +39,7 @@ const SwitchCheck = (props) => {
     } else if (value) {
       data.status = 0;
     }
-    dispatch(updateStatus(data));
+    dispatch(props.action(data));
   };
   return (
     <div>

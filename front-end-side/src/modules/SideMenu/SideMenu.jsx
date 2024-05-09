@@ -1,11 +1,11 @@
 import {
-  RadarChartOutlined,
-  TeamOutlined,
-  VideoCameraOutlined,
-  BarChartOutlined,
-  CalculatorOutlined,
-  PlusOutlined,
+  // TeamOutlined,
+  // VideoCameraOutlined,
+  // BarChartOutlined,
+  // CalculatorOutlined,
+  // PlusOutlined,
   AlertOutlined,
+  MehOutlined,
 } from "@ant-design/icons";
 import { ConfigProvider, Menu } from "antd";
 import React, { useState } from "react";
@@ -73,13 +73,12 @@ const SideMenu = () => {
           items={[
             {
               key: "1",
-              icon: <RadarChartOutlined/>,
+              icon: <MehOutlined />,
               label: <div className="md:text-xl ">Face Detection</div>,
               className: " my-3 menu-item",
               children: [
                 {
                   key: "10",
-                  icon: <TeamOutlined />,
                   label: (
                     <div className="md:text-xl">
                       <NavLink to={"/faceDetection/authorizationList"}>
@@ -91,7 +90,6 @@ const SideMenu = () => {
                 },
                 {
                   key: "11",
-                  icon: <VideoCameraOutlined />,
                   label: (
                     <div className="md:text-xl">
                       <NavLink to={"/faceDetection/offList"}>Out List</NavLink>
@@ -101,7 +99,6 @@ const SideMenu = () => {
                 },
                 {
                   key: "12",
-                  icon: <BarChartOutlined />,
                   label: (
                     <div className="md:text-xl">
                       <NavLink to={"/faceDetection/chart"}>Chart</NavLink>
@@ -111,7 +108,6 @@ const SideMenu = () => {
                 },
                 {
                   key: "13",
-                  icon: <CalculatorOutlined />,
                   label: (
                     <div className="md:text-xl">
                       <NavLink to={"/faceDetection/timekeeping"}>
@@ -123,7 +119,6 @@ const SideMenu = () => {
                 },
                 {
                   key: "14",
-                  icon: <PlusOutlined />,
                   label: (
                     <div className="md:text-xl">
                       <NavLink to={"/faceDetection/addList"}>
@@ -135,12 +130,10 @@ const SideMenu = () => {
                 },
                 {
                   key: "15",
-                  icon: <AlertOutlined />,
                   label: <div className="md:text-xl">Notification</div>,
                   children: [
                     {
                       key: "101",
-                      icon: <AlertOutlined />,
                       className: "sub-menu-item",
                       label: (
                         <div className="md:text-lg">
@@ -152,7 +145,6 @@ const SideMenu = () => {
                     },
                     {
                       key: "102",
-                      icon: <AlertOutlined />,
                       className: "sub-menu-item",
                       label: (
                         <div className="md:text-lg">
@@ -168,6 +160,32 @@ const SideMenu = () => {
                 },
               ],
             },
+            {
+              key: "2",
+              icon: <AlertOutlined />,
+              label: <div className="md:text-xl">Pose Detection</div>,
+              className: "menu-item",
+              children: [
+                {
+                  key: "21",
+                  label: (
+                    <div className="md:text-xl">
+                      <NavLink to={"/poseDetection/poseAlertList"}>Trigger List</NavLink>
+                    </div>
+                  ),
+                  className: "sub-menu-item",
+                },
+                {
+                  key: "22",
+                  label: (
+                    <div className="md:text-xl">
+                      <NavLink to={"/poseDetection/poseAlertManagement"}>Trigger Management</NavLink>
+                    </div>
+                  ),
+                  className: "sub-menu-item",
+                },
+              ],
+            },
           ]}
           style={{
             flex: 1,
@@ -177,7 +195,6 @@ const SideMenu = () => {
         ></Menu>
       </ConfigProvider>
     </div>
-
   );
 };
 

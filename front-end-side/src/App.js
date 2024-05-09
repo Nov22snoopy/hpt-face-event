@@ -49,9 +49,11 @@ function App() {
       dispatch(createEvent(data));
     }
   }, [notifi, object, dispatch]);
+
+
+
   //history
   const history = createBrowserHistory();
-
   return (
     <>
       {/* modal warning */}
