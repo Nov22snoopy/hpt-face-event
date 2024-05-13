@@ -14,31 +14,34 @@ const FormSearchTimekeeping = ({ today, setDate }) => {
   //option select group
 
   return (
-    <div className="Container__Form">
-      <h2 className="formSearch__title">Time Sheet</h2>
-      <div className="Content__Form">
-        {/* input search email */}
-        <Search/>
-        {/* Select date */}
-        <DatePicker
-          allowClear={false}
-          defaultValue={dayjs(today)}
-          onChange={onChange}
-        />
-        {/* Select group */}
-        <SelectList/>
-        <Button
-          title="Search"
-          className="ButtonCustom SearchBtn"
-          icon={<SearchOutlined />}
-        />
-        <Button
-          title="Refresh data"
-          className="ButtonCustom DetailBtn"
-          icon={<ReloadOutlined />}
-        ></Button>
+    <>
+      <div className="Container__Form">
+        <h2 className="formSearch__title">Time Sheet</h2>
+        <div className="Content__Form">
+          {/* input search email */}
+          <Search />
+          {/* Select date */}
+          <DatePicker
+            allowClear={false}
+            defaultValue={dayjs(today)}
+            onChange={onChange}
+          />
+          {/* Select group */}
+          <SelectList />
+          <Button
+            title="Search"
+            className="ButtonCustom SearchBtn"
+            icon={<SearchOutlined />}
+          />
+          <Button
+            title="Refresh data"
+            className="ButtonCustom DetailBtn"
+            icon={<ReloadOutlined />}
+          ></Button>
+        </div>
       </div>
-    </div>
+      <hr className="my-3" />
+    </>
   );
 };
 

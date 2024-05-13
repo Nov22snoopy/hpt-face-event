@@ -12,5 +12,6 @@ export const faceDetectionService = {
   addList :(payload) => http.post(`/faceDetection/addList`, payload),
   getallNotification: ()=> http.get('/faceDetection/notification'),
   getAllCamera: () => http.get('/faceDetection/camera'),
-
+  getAllCameraIdentify: (query) => http.get(`/faceDetection/getAllCameraIdentfy?date=${query}`),
+  getIdentifyStats:(query) => http.get(`/faceDetection/getIdentifyStats?date=${query}`)
 }

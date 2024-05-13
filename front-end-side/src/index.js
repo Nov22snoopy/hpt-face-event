@@ -8,7 +8,9 @@ import { store } from "./store";
 import SocketClient from "./socket/socketClient";
 
 export const socketClient = new SocketClient();
-
+// window.onbeforeunload = function () {
+//   window.scrollTo(0, 0);
+// }
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>

@@ -7,7 +7,7 @@
 /* CSS Button Custom */
 .ButtonCustom {
   width: 100px;
-  height: 35px;
+  height: 30px;
   font-size: 14px;
   margin-bottom: 4px;
   display: flex;
@@ -95,3 +95,11 @@
   font-size: 20px !important;
 }
 
+/* CSS ant table */
+.ant-table-row {
+  transition: all 0.5s;
+}
+.ant-table-row:hover {
+  border-color: transparent;
+  box-shadow: 10px 5px 10px 10px rgba(10, 0, 20, 0.08), 0 1px 2px rgba(10, 0, 20, 0.08) !important;
+}

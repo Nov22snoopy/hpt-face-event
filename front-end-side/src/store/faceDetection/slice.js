@@ -5,6 +5,8 @@ import {
   getAllListByDate,
   getAllListByMail,
   getAttendanceList,
+  getCameraIdentifyEvent,
+  getIdentifyStats,
   getListFace,
   getOffList,
   getOffListAge,
@@ -29,6 +31,8 @@ const initialState = {
   selectedList: null,
   listId: null,
   cameraList: null,
+  cameraIdentify: null,
+  identifyStats: null
 };
 
 export const { reducer: faceDetectionReducer, actions: faceDetectionActions } =
@@ -53,7 +57,6 @@ export const { reducer: faceDetectionReducer, actions: faceDetectionActions } =
         state.searchEmail = null;
       },
       //select date
-      
     },
     extraReducers: (builder) => {
       builder
@@ -138,10 +141,17 @@ export const { reducer: faceDetectionReducer, actions: faceDetectionActions } =
         .addCase(getListFace.fulfilled, (state, actions) => {
           state.listFace = actions.payload;
         })
-
         //get all camera
         .addCase(getAllCamera.fulfilled, (state, actions) => {
           state.cameraList = actions.payload;
-        });
+        })
+        //get all camera identify event
+        .addCase(getCameraIdentifyEvent.fulfilled, (state, action) => {
+          state.cameraIdentify = [...action.payload];
+        })
+        //get identify stats
+        .addCase(getIdentifyStats.fulfilled, (state,action)=>{
+          state.identifyStats = [...action.payload]
+        })
     },
   });

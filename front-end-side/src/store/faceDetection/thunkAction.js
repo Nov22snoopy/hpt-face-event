@@ -20,7 +20,7 @@ export const getOffList = createAsyncThunk(
   async (query, { rejectWithValue }) => {
     try {
       const res = await offListService.getOffList(query);
-      return res.data.content
+      return res.data.content;
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -65,8 +65,6 @@ export const getAttendanceList = createAsyncThunk(
   }
 );
 
-
-
 // get all list by date
 export const getAllListByDate = createAsyncThunk(
   "/faceDetection/allListByDate",
@@ -99,9 +97,9 @@ export const getTimeDetail = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const res = await faceDetectionService.getTimeDetail(payload);
-        if (res.data.statusCode === 200) {
-          return res.data.content
-        }
+      if (res.data.statusCode === 200) {
+        return res.data.content;
+      }
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -124,20 +122,26 @@ export const updateTimeOut = createAsyncThunk(
 );
 
 // get all list face
-export const getListFace = createAsyncThunk('/faceDetection/allListFace', async(_,{rejectWithValue})=>{
-  try {
-    const res = await faceDetectionService.getListFace();
-    return res.data.content;
-  } catch (error) {
-    return rejectWithValue(error)
+export const getListFace = createAsyncThunk(
+  "/faceDetection/allListFace",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await faceDetectionService.getListFace();
+      return res.data.content;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
   }
-})
+);
 //get all list item by email
 export const getAllListByMail = createAsyncThunk(
   "/faceDetection/allListItem",
   async (payload, { rejectWithValue }) => {
     try {
-      const res = await  faceDetectionService.getAllListByMail(payload.email, payload.list_id);
+      const res = await faceDetectionService.getAllListByMail(
+        payload.email,
+        payload.list_id
+      );
       return res.data.content;
     } catch (error) {
       return rejectWithValue(error);
@@ -145,37 +149,69 @@ export const getAllListByMail = createAsyncThunk(
   }
 );
 //search list item by email
-export const searchByEmail = createAsyncThunk(`/faceDetection/searchItemByEmail`, async(payload, {rejectWithValue})=>{
-  try {
-    const res = await faceDetectionService.searchByEmail(payload);
-    return res.data.content;
-  } catch (error) {
-    return rejectWithValue(error)
-  }
-})
-// add list
-export const addList = createAsyncThunk('/faceDetection/addList', async(payload, {rejectWithValue})=>{
-  try {
-    const res = await faceDetectionService.addList(payload)
-    if(res.data.statusCode === 200) {
-      message.success('create new list successfully')
+export const searchByEmail = createAsyncThunk(
+  `/faceDetection/searchItemByEmail`,
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await faceDetectionService.searchByEmail(payload);
+      return res.data.content;
+    } catch (error) {
+      return rejectWithValue(error);
     }
-  } catch (error) {
-    return rejectWithValue(error)
   }
-})
+);
+// add list
+export const addList = createAsyncThunk(
+  "/faceDetection/addList",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await faceDetectionService.addList(payload);
+      if (res.data.statusCode === 200) {
+        message.success("create new list successfully");
+      }
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 
 //get camera list
-export const getAllCamera = createAsyncThunk('/faceDetection/camera', async(_,{rejectWithValue})=>{
-  try {
-    const res = await faceDetectionService.getAllCamera();
-    if( res.data.statusCode === 200) {
-      return res.data.content
+export const getAllCamera = createAsyncThunk(
+  "/faceDetection/camera",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await faceDetectionService.getAllCamera();
+      if (res.data.statusCode === 200) {
+        return res.data.content;
+      }
+    } catch (error) {
+      return rejectWithValue(error);
     }
-  } catch (error) {
-    return rejectWithValue(error)
   }
-})
+);
 
+//get camera identify event
+export const getCameraIdentifyEvent = createAsyncThunk(
+  "/getAllCameraIdentify",
+  async (query, { rejectWithValue }) => {
+    try {
+      const res = await faceDetectionService.getAllCameraIdentify(query);
+      return res.data.content;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 
-
+//get identify stats
+export const getIdentifyStats = createAsyncThunk(
+  `/faceDetection/getIdentifyStats`,
+  async (query, { rejectWithValue }) => {
+    try {
+      const res = await faceDetectionService.getIdentifyStats(query);
+      return res.data.content;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);

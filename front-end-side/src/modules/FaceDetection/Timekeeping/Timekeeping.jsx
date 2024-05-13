@@ -229,7 +229,6 @@ const Timekeeping = () => {
       <div className="form-search">
         <FormSearchTimekeeping date={date} today={currentDate} setDate={setDate}/>
       </div>
-      <hr className="my-3" />
       {/* Table */}
       <ConfigProvider
         theme={{
@@ -259,6 +258,7 @@ const Timekeeping = () => {
             x: 1300,
             y: 750
           }}
+          
         />
       </ConfigProvider>
       {/* Modal detail */}

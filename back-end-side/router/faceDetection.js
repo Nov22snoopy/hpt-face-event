@@ -435,6 +435,7 @@ route.post("/addList", async (req, res, next) => {
             console.log(item.name);
             console.log(newList);
             io.emit("warning", {
+              type: 'face alert',
               check: checkSetting,
               object: newList,
               notification: {
@@ -479,5 +480,48 @@ route.get("/camera", async (req, res, next) => {
     next(error);
   }
 });
+
+//get camera event
+route.get('/getAllCameraIdentfy', async(req, res, next)=>{
+  const date = req.query.date
+  try {
+    const [data] = await AllList.getCameraAllListByDate(date)
+    return res.status(200).json({
+      message: 'get camara itdentify successfully',
+      content: data
+    })
+  } catch (error) {
+    res.status(500).json({
+      message:error.message
+    })
+    next(error)
+  }
+})
+//get quantity in list and out list
+route.get('/getIdentifyStats', async(req, res, next)=>{
+  const date = req.query.date;
+  try {
+    const [inList] = await AllList.getAllInList(date);
+    const [outList] = await AllList.getAllOutList(date);
+    const result = [
+      {name: 'InList', quantity: 0},
+      {name: 'OutList', quantity: 0}
+    ]
+    if(inList && outList) {
+      result[0].quantity = inList[0].inList
+      result[1].quantity = outList[0].outList
+
+    }
+    res.status(200).json({
+      message: 'get identify stats successfully',
+      content:result
+    })
+  } catch (error) {
+    res.status(500).json({
+      message:error.message
+    })
+    next(error)
+  }
+})
 
 export default route;

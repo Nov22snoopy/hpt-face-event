@@ -10,12 +10,18 @@ import { sideMenuAction } from "../store/SideMenu/slice";
 import "./mainLayout.css";
 import MainFooter from "../modules/mainPages/MainFooter";
 
-// set set style for layout
+
+const MainPage = () => {
+  const { collapse } = useSelector((state) => state.SideMenu);
+  const [sideMenu, setSideMenu] = useState(Boolean);
+  const dispatch = useDispatch();
+  // set set style for layout
 //********************* */
 const layoutStyle = {
   overflow: "hidden",
   padding: '5px',
-  minHeight: '100svh'
+  minHeight: '100svh',
+  backgroundColor: " #f1f5f9"
 };
 // set set style for siter
 //********************* */
@@ -24,9 +30,10 @@ const siderStyle = {
   lineHeight: "100px",
   backgroundColor: "white",
   height: "auto",
-  minHeight: '100svh',
+  minHeight: collapse?'auto':'100svh',
   boxShadow: "0 2px 4px rgba(0,0,20,.08),0 1px 2px rgba(0,0,20,.08)",
-  borderRadius: '20px'
+  borderRadius: '20px',
+  transition: '0.3s',
 };
 // set style for header
 //********************* */
@@ -38,7 +45,11 @@ const headerStyle = {
   backgroundColor: "white",
   padding: "10px 20px",
   boxShadow: "0 2px 4px rgba(0,0,20,.08),0 1px 2px rgba(0,0,20,.08)",
-  borderRadius: '15px'
+  borderRadius: '15px',
+  transition: '0.3s',
+  width: 'auto',
+
+
 };
 // set style for content
 //********************* */
@@ -57,11 +68,6 @@ const footerStyle = {
 const drawerStyles = {
   minHeight: "100vh",
 };
-const MainPage = () => {
-  const { collapse } = useSelector((state) => state.SideMenu);
-  const [sideMenu, setSideMenu] = useState(Boolean);
-  const dispatch = useDispatch();
-
   // set window size for responsive
   //*********************** */
   const setWindow = () => {
@@ -90,7 +96,6 @@ const MainPage = () => {
       {window.addEventListener("resize", setWindow)}
       <Layout style={layoutStyle}>
         {sideMenu || windowDefault() ? (
-          <Affix offsetTop={0}>
             <Sider
               style={siderStyle}
               width={250}
@@ -100,7 +105,6 @@ const MainPage = () => {
             >
               <SideMenu />
             </Sider>
-          </Affix>
         ) : (
           <Affix offsetTop={0}>
             <Drawer
@@ -113,12 +117,13 @@ const MainPage = () => {
               onClose={() => {
                 dispatch(sideMenuAction.closeSideMenu());
               }}
+              
             >
               <SideMenu />
             </Drawer>
           </Affix>
         )}
-        <Layout className="container">
+        <Layout style={layoutStyle} className="container">
           <Affix offsetTop={0}>
             <Header style={headerStyle}>
               <MainHeader />

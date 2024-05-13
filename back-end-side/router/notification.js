@@ -338,4 +338,38 @@ route.delete("/deleteNotifiEvent", async (req, res, next) => {
   }
 });
 
+//get camera event
+route.get('/getCameraFaceEvent', async(req, res, next)=> {
+  const date = req.query.date;
+  try {
+    const [data] = await NotifiEvent.getCameraFaceEventByDate(date)
+    return res.status(200).json({
+      message: 'get camera face notification successfully',
+      content: data
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    })
+    next(error)
+  }
+})
+
+//get face warning stats
+route.get(`/getFaceWarningStats`, async(req, res, next)=>{
+  const date = req.query.date;
+  try {
+    const [data] = await NotifiEvent.getFaceWarningStats(date)
+    res.status(200).json({
+      message: 'get face warning stats successfully',
+      content: data
+    })
+  } catch (error) {
+    res.status(500).json({
+      message:error.message
+    })
+    next(error)
+  }
+})
+
 export default route;

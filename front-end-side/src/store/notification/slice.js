@@ -5,6 +5,8 @@ import {
   deleteNotification,
   getAllNotifiEvent,
   getAllNotification,
+  getCameraFaceEvent,
+  getFaceWarningStats,
   getNotifiEventDetail,
   getNotificationDetail,
   updateNotification,
@@ -17,6 +19,8 @@ const initialState = {
   notificationDetail: null,
   allNotifiEvent: null,
   notifiEventDetail: null,
+  cameraFaceWarning: null,
+  faceWarningStats: null
 };
 
 export const { reducer: notificationReducer, actions: notificationAction } =
@@ -98,6 +102,14 @@ export const { reducer: notificationReducer, actions: notificationAction } =
         })
         .addCase(deleteNotifiEvent.rejected, (state) => {
           state.updateNotification = true;
+        })
+        //get all camera face warning event
+        .addCase(getCameraFaceEvent.fulfilled, (state, action)=>{
+          state.cameraFaceWarning = [...action.payload]
+        })
+        //get face warning stats
+        .addCase(getFaceWarningStats.fulfilled, (state, action)=>{
+          state.faceWarningStats = [...action.payload]
         })
     },
   });

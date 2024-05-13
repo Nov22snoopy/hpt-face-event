@@ -18,7 +18,6 @@ const PoseAlertManagement = () => {
   const [poseType, setPoseType] = useState("");
   const [streamId, setStreamId] = useState([]);
   const [timeId, setTimeId] = useState("");
-
   const { poseDetectionSetting, updatePoseDetection } = useSelector(
     (state) => state.PoseDetectionService
   );
@@ -65,7 +64,7 @@ const PoseAlertManagement = () => {
       dataIndex: "name, id",
       title: "Notification name",
       fixed: "left",
-      render: (_, { poseType, id }) => <div key={id}>{poseType}</div>,
+      render: (_, { poseType, id }) => <div key={id}>{poseType.toUpperCase()}</div>,
     },
     //camera
     {

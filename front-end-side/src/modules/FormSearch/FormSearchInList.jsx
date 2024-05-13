@@ -18,47 +18,53 @@ const FormSearchInList = (props) => {
     dispatch(getListFace());
   }, [dispatch]);
   //set group option
-  
 
   return (
-    <div className="Container__Form">
-      <h2 className="formSearch__title">In List</h2>
-      <div className="Content__Form">
-        {/* input search email */}
-        <Input
-          allowClear={{
-            clearIcon: <CloseOutlined />,
-          }}
-          placeholder="search email..."
-          prefix={<UserOutlined />}
-          enterbutton="true"
-          onChange={(e)=>{setEmail(e.target.value)}}
-          className="w-1/2"
-        />
-        {/* Select group */}
-        <Select
-          showSearch
-          placeholder="Search group"
-          optionFilterProp="children"
-          mode="multiple"
-          maxTagCount="responsive"
-          options={listFace?.map((item)=> {return{label: item.name, value: item.id}})}
-          onChange={(value) => {
-            setListId(value);
-          }}
-        />
-        <Button
-          title="Search"
-          className="ButtonCustom SearchBtn"
-          icon={<SearchOutlined />}
-        />
-        <Button
-          title="Refresh data"
-          className="ButtonCustom DetailBtn"
-          icon={<ReloadOutlined />}
-        ></Button>
+    <>
+      <div className="Container__Form">
+        <h2 className="formSearch__title">In List</h2>
+        <div className="Content__Form">
+          {/* input search email */}
+          <Input
+            allowClear={{
+              clearIcon: <CloseOutlined />,
+            }}
+            placeholder="search email..."
+            prefix={<UserOutlined />}
+            enterbutton="true"
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+            className="w-1/2"
+          />
+          {/* Select group */}
+          <Select
+            showSearch
+            placeholder="Search group"
+            optionFilterProp="children"
+            mode="multiple"
+            maxTagCount="responsive"
+            options={listFace?.map((item) => {
+              return { label: item.name, value: item.id };
+            })}
+            onChange={(value) => {
+              setListId(value);
+            }}
+          />
+          <Button
+            title="Search"
+            className="ButtonCustom SearchBtn"
+            icon={<SearchOutlined />}
+          />
+          <Button
+            title="Refresh data"
+            className="ButtonCustom DetailBtn"
+            icon={<ReloadOutlined />}
+          ></Button>
+        </div>
       </div>
-    </div>
+      <hr className="my-3" />
+    </>
   );
 };
 

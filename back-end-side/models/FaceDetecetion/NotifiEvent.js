@@ -33,4 +33,18 @@ export class NotifiEvent {
     `;
     return pool.execute(sql);
   }
+  static getCameraFaceEventByDate(date) {
+    let sql =  `SELECT count(streamId) as quantity, name as camera FROM videoanalytics.warning_event
+    INNER JOIN videoanalytics.streams ON warning_event.streamId = streams.id
+    WHERE warning_event.created_at like "%${date}%"
+    GROUP BY streamId;`;
+    return pool.execute(sql)
+  }
+  static getFaceWarningStats(date) {
+    let sql = `SELECT count(notifiId) as quantity, name as warning FROM videoanalytics.warning_event
+    INNER JOIN videoanalytics.warning_setting ON warning_event.notifiId = warning_setting.id
+    WHERE warning_event.created_at like "%${date}%"
+    GROUP BY notifiId;`;
+    return pool.execute(sql)
+  }
 }

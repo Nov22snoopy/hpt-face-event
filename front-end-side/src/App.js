@@ -11,10 +11,12 @@ import { io } from "socket.io-client";
 import { createEvent } from "./store/notification/thunkAction";
 import { modalActions } from "./store/modals/slice";
 import { notificationAction } from "./store/notification/slice";
+import { createPoseDetectionEvent } from "./store/poseDetection/thunkAction";
 const socket = io("http://localhost:8080");
 function App() {
   const [object, setObject] = useState(null);
   const [notifi, setNotifi] = useState(null);
+  const [type, setType] = useState('');
   const {warningFaceModal} = useSelector(state => state.ModalService)
   const dispatch = useDispatch();
   //connect socket
@@ -23,7 +25,9 @@ function App() {
   }, [dispatch]);
   //close modal
   const onCancel = () => {
+    //close modal
     dispatch(modalActions.closeWanringFaceModal())
+    //clear face notification detail
     dispatch(notificationAction.clearNofifiEventDetai())
     setNotifi(null)
     setObject(null)
@@ -34,11 +38,12 @@ function App() {
       dispatch(modalActions.openWanringFaceModal(value.check))
       setObject(value.object);
       setNotifi(value.notification);
+      setType(value.type)
     });
   },[dispatch]);
   //save new event to database
   useEffect(() => {
-    if (notifi && object) {
+    if (notifi && object && type ==='face alert') {
       const data = {
         notifiId: notifi.notifiId,
         streamId: object.stream_id,
@@ -48,7 +53,16 @@ function App() {
       };
       dispatch(createEvent(data));
     }
-  }, [notifi, object, dispatch]);
+    if (notifi && type === 'pose alert' && !object) {
+      const data = {
+        poseId: notifi.notifiId,
+        streamId: notifi.notifiStream,
+        createdAt: notifi.notifiTime
+      };
+      dispatch(createPoseDetectionEvent(data))
+    }
+
+  }, [notifi, object, type, dispatch]);
 
 
 
@@ -61,7 +75,6 @@ function App() {
         <WarningModal
           notifi={notifi}
           object={object}
-
         />
       </Modal>
       {/* router */}

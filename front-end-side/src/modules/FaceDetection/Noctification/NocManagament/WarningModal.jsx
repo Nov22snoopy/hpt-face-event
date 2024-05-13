@@ -1,30 +1,45 @@
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import { Button, Flex } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import userImage from "../../../../assests/img/user-img.jpg";
 import fallingImage from "../../../../assests/img/man_falling_down.jpg";
-import sittingImage from  "../../../../assests/img/man_sitting.jpg"
+import sittingImage from "../../../../assests/img/man_sitting.jpg";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { modalActions } from "../../../../store/modals/slice";
 
 const WarningModal = (props) => {
+  const [eventDetail, setEventDetail] = useState(null)
   const dispatch = useDispatch();
   const { notifiEventDetail } = useSelector(
     (state) => state.NotificationService
   );
-  console.log(notifiEventDetail);
+  const { poseDetectionEventDetail } = useSelector(
+    (state) => state.PoseDetectionService
+  );
+  const { notifi, object } = props;
+  console.log(poseDetectionEventDetail);
+  //set event detail data display
+  
+  useEffect(()=>{
+    if(notifiEventDetail) {
+      setEventDetail(notifiEventDetail[0])
+    }
+    else if(poseDetectionEventDetail) {
+      setEventDetail(poseDetectionEventDetail[0])
+    }
+  },[notifiEventDetail,poseDetectionEventDetail])
+  //set warningImage
   const warningImage = () => {
-    if (props.notifi?.notifiName === 'falling_down'){
-      return fallingImage
+    if (notifi?.notifiName === "falling_down" || eventDetail?.poseType === "falling_down" ) {
+      return fallingImage;
     }
-    if (props.notifi?.notifiName === 'sitting') {
-      return sittingImage
+    if (notifi?.notifiName === "sitting" || eventDetail?.poseType === "sitting") {
+      return sittingImage;
+    } else {
+      return userImage;
     }
-    else {
-      return userImage
-    }
-  }
+  };
   return (
     <>
       <div className="text-center">
@@ -42,21 +57,19 @@ const WarningModal = (props) => {
           <div className="notification-name mt-2">
             <h1 className="text-lg font-semibold">Notification name</h1>
             <p>
-              {notifiEventDetail
-                ? notifiEventDetail[0].name
-                : props.notifi?.notifiName}
+              {eventDetail
+                ? eventDetail.name || eventDetail.poseType
+                : notifi?.notifiName}
             </p>
           </div>
           {/* notification object */}
-          {props.object ? (
+          {object || notifiEventDetail ? (
             <div className="object-detail mt-3">
               <h1 className="text-lg font-semibold">Object</h1>
               <div className="flex justify-start gap-2">
                 <p className="text-md">
                   <span className="font">Age: </span>
-                  {notifiEventDetail
-                    ? notifiEventDetail[0].age
-                    : props.object?.age}
+                  {notifiEventDetail ? notifiEventDetail[0].age : object?.age}
                 </p>
                 <p className="text-md">
                   <span className="font">Gender: </span>
@@ -64,7 +77,7 @@ const WarningModal = (props) => {
                     ? notifiEventDetail[0].gender === 1
                       ? "Male"
                       : "Female"
-                    : props.object?.gender === 1
+                    : object?.gender === 1
                     ? "Male"
                     : "Female"}
                 </p>
@@ -76,11 +89,11 @@ const WarningModal = (props) => {
           <div className="notification-time mt-3">
             <h1 className="text-lg font-semibold">Time</h1>
             <p>
-              {notifiEventDetail
-                ? moment(notifiEventDetail[0].created_at).format(
+              {eventDetail
+                ? moment(eventDetail.created_at).format(
                     "DD-MM-YYYY HH:mm:ss"
                   )
-                : props.notifi?.notifiTime}
+                : notifi?.notifiTime}
             </p>
           </div>
           {/* notification camera */}
@@ -88,9 +101,9 @@ const WarningModal = (props) => {
             <h1 className="text-lg font-semibold">Camera/Position</h1>
             <p>
               Camera:{" "}
-              {notifiEventDetail
-                ? notifiEventDetail[0].camera
-                : props.object?.stream_id}{" "}
+              {eventDetail
+                ? eventDetail.camera
+                : object?.stream_id}{" "}
             </p>
           </div>
         </div>

@@ -5,6 +5,7 @@ import { WarningPoseTime } from "../models/PoseDetection/WarningPoseTime.js";
 import moment from "moment";
 import { TestPoseTrigger } from "../models/PoseDetection/TestPoseWarningTrigger.js";
 import { io } from "../socket/socket.js";
+import { WarningPoseEvent } from "../models/PoseDetection/WarningPoseEvent.js";
 
 const route = express.Router();
 
@@ -300,11 +301,10 @@ route.post("/testTrigger", async (req, res, next) => {
           } else {
             check = true;
           }
+          console.log(item.poseType);
           //check rule
-          const checkRule = item.poseType.indexOf(
-            (element) => element === test.ruleType
-          );
-          if (checkRule !== -1) {
+          const checkRule = item.poseType.match(test.ruleType);
+          if (!checkRule) {
             check = false;
             return;
           } else {
@@ -346,11 +346,13 @@ route.post("/testTrigger", async (req, res, next) => {
           if (check) {
             console.log(item.id);
             io.emit("warning", {
+              type: "pose alert",
               check: check,
               object: null,
               notification: {
                 notifiId: item.id,
                 notifiName: item.poseType,
+                notifiStream: test.streamId,
                 notifiTime: createAt,
               },
             });
@@ -372,5 +374,130 @@ route.post("/testTrigger", async (req, res, next) => {
     next(error);
   }
 });
+
+//create pose alert event
+route.post(`/createPoseDetectionEvent`, async (req, res, next) => {
+  const poseId = req.body.poseId;
+  const streamId = req.body.streamId;
+  const createAt = req.body.createdAt;
+  try {
+    const data = new WarningPoseEvent(poseId, streamId, createAt);
+    data
+      .createPoseEvent()
+      .then(() => {
+        res.status(200).json({
+          message: "creaete new pose alert event successfully",
+          statusCode: res.statusCode,
+        });
+      })
+      .catch((error) => {
+        res.status(500).json({
+          message: error.message,
+        });
+      });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+    next(error);
+  }
+});
+
+// get all pose alert event
+route.get(`/getAllPoseDetectionEvent`, async (req, res, next) => {
+  const poseType = req.query.poseType;
+  const streamId = req.query.streamId;
+  const timeId = req.query.timeId;
+  try {
+    const [data] = await WarningPoseEvent.getAllPoseEvent(
+      poseType,
+      streamId,
+      timeId
+    );
+    res.status(200).json({
+      message: "get all pose alert event successfully",
+      content: data,
+      statusCode: res.statusCode,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+    next(error);
+  }
+});
+
+//get pose alert event detail
+route.get(`/getPoseDetectionEventDetail`, async (req, res, next) => {
+  const id = req.query.id;
+  try {
+    const [data] = await WarningPoseEvent.getPoseEventDetail(id);
+    res.status(200).json({
+      message: "get pose alert event successfully",
+      content: data,
+      statusCode: res.statusCode,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+    next(error);
+  }
+});
+
+//detelet pose alert event
+route.delete(`/deletePoseDetectionEvent`, async (req, res, next) => {
+  const id = req.query.id;
+  try {
+    const deleteData = new WarningPoseEvent();
+    deleteData
+      .deletePoseEvent(id)
+      .then(() => {
+        res.status(200).json({
+          message: "Delete pose alert event successfully",
+          statusCode: res.statusCode,
+        });
+      })
+      .catch((error) => {
+        res.status(500).json({
+          message: error.message,
+        });
+      });
+  } catch (error) {}
+});
+
+//get all camera pose event
+route.get("/getCameraPoseEvent", async (req, res, next) => {
+  const date = req.query.date;
+  try {
+    const [data] = await WarningPoseEvent.getCameraPoseEventByDate(date);
+    res.status(200).json({
+      message: "get camera pose event successfully",
+      content: data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+    next(error);
+  }
+});
+
+//get pose warning stats
+route.get('/getPoseWarningStats', async(req, res, next)=>{
+  const date = req.query.date
+  try {
+    const [data] = await WarningPoseEvent.getPoseWarningStats(date)
+    res.status(200).json({
+      message: "get  pose warning stats successfully",
+      content: data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+    next(error);
+  }
+})
 
 export default route;

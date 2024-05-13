@@ -10,5 +10,7 @@ export const notificationService = {
   createEvent: (payload) => http.post('/notification/createEvent', payload),
   getAllNotifiEvent: (query) => http.get(`/notification/getAllNotifiEvent?name=${query.name}&streamId=${query.streamId}&timeId=${query.timeId}`),
   getNotifiEventDetail: (query) => http.get(`/notification/getNotifiEventDetail?id=${query}`),
-  deleteNotifiEvent: (query) => http.delete(`/notification/deleteNotifiEvent?id=${query}`)
+  deleteNotifiEvent: (query) => http.delete(`/notification/deleteNotifiEvent?id=${query}`),
+  getCameraFaceEvent: (query) => http.get(`/notification/getCameraFaceEvent?date=${query}`),
+  getFaceWarningStats: (query) =>http.get(`/notification/getFaceWarningStats?date=${query}`)
 }

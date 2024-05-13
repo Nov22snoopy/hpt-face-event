@@ -5,3 +5,15 @@
   background-position: center;
   background-repeat: no-repeat;
 }
+.dashbroad {
+  color: rgb(108 114 147);
+}
+.dashbroad_card {
+  color: #624bff;
+}
+.icon {
+  color: #624bff;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background-color: #e0dcfe;
+}
