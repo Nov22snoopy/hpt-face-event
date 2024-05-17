@@ -101,7 +101,7 @@ const FormSearchAlertManagement = (props) => {
               />
             </Form.Item>
             {/* Select date */}
-            <Form.Item style={{marginInlineEnd: '5px'}}  name='time'>
+            <Form.Item  style={{marginInlineEnd: '5px'}}  name='time'>
               <Select
                 mode="multiple"
                 style={{ minWidth: "200px" }}

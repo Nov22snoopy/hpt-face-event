@@ -5,6 +5,7 @@ export const faceDetectionService = {
   getAllListByDate: (payload) => http.post('/faceDetection/allListByDate', payload),
   caculateTimekeeping: (payload) => http.post('/faceDetection/caculateTimekeeping', payload),
   getTimeDetail: (payload) => http.post('/faceDetection/timeDetail', payload),
+  getTimeLineDetail: (query) => http.get(`/faceDetection/getTimeLineDetail?id=${query.id}&date=${query.date}`),
   updateTimeOut: (payload) => http.post(`/faceDetection/updateCheckOut`, payload),
   getAttendanceList: (payload) => http.post (`/faceDetection/allListAttendance`, payload),
   getAllListByMail :(query, payload) => http.get(`/faceDetection/allListByMail?email=${query}&list_id=${payload}`),
@@ -13,5 +14,6 @@ export const faceDetectionService = {
   getallNotification: ()=> http.get('/faceDetection/notification'),
   getAllCamera: () => http.get('/faceDetection/camera'),
   getAllCameraIdentify: (query) => http.get(`/faceDetection/getAllCameraIdentfy?date=${query}`),
-  getIdentifyStats:(query) => http.get(`/faceDetection/getIdentifyStats?date=${query}`)
+  getIdentifyStats:(query) => http.get(`/faceDetection/getIdentifyStats?date=${query}`),
+  getGeneralStats: (query) => http.get(`/faceDetection/getGeneralStats?date=${query}`)
 }

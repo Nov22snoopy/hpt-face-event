@@ -1,7 +1,7 @@
 import pool from "../../config/db.js";
 
 export class NotifiEvent {
-  constructor(_notifiId, _streamId,_age, _gender, _createdAt) {
+  constructor(_notifiId, _streamId, _age, _gender, _createdAt) {
     (this.notifiId = _notifiId),
       (this.streamId = _streamId),
       (this.age = _age),
@@ -21,7 +21,13 @@ export class NotifiEvent {
     FROM videoanalytics.warning_event 
     INNER JOIN videoanalytics.warning_setting ON videoanalytics.warning_event.notifiId = videoanalytics.warning_setting.id
     INNER JOIN videoanalytics.streams ON videoanalytics.warning_event.streamId = videoanalytics.streams.id
-    WHERE warning_setting.name like '%${name}%' ${streamId?.length > 0? `AND streamId in (${streamId})` :''} ${timeId?.length > 0? `AND dayofweek(warning_event.created_at) in (${timeId})` :''};`;
+    WHERE warning_setting.name like '%${name}%' ${
+      streamId?.length > 0 ? `AND streamId in (${streamId})` : ""
+    } ${
+      timeId?.length > 0
+        ? `AND dayofweek(warning_event.created_at) in (${timeId})`
+        : ""
+    };`;
     return pool.execute(sql);
   }
   static findNotifiEvent(id) {
@@ -34,17 +40,23 @@ export class NotifiEvent {
     return pool.execute(sql);
   }
   static getCameraFaceEventByDate(date) {
-    let sql =  `SELECT count(streamId) as quantity, name as camera FROM videoanalytics.warning_event
+    let sql = `SELECT count(streamId) as quantity, name as camera FROM videoanalytics.warning_event
     INNER JOIN videoanalytics.streams ON warning_event.streamId = streams.id
     WHERE warning_event.created_at like "%${date}%"
     GROUP BY streamId;`;
-    return pool.execute(sql)
+    return pool.execute(sql);
   }
   static getFaceWarningStats(date) {
     let sql = `SELECT count(notifiId) as quantity, name as warning FROM videoanalytics.warning_event
     INNER JOIN videoanalytics.warning_setting ON warning_event.notifiId = warning_setting.id
     WHERE warning_event.created_at like "%${date}%"
     GROUP BY notifiId;`;
-    return pool.execute(sql)
+    return pool.execute(sql);
+  }
+  static getTotalFaceWarning(date) {
+    let sql = `SELECT sum(quantity) as quantity FROM (
+      SELECT count(notifiId) as quantity FROM videoanalytics.warning_event
+      WHERE warning_event.created_at like "%${date}%" GROUP BY notifiId) AS face_warning;`;
+    return pool.execute(sql);
   }
 }

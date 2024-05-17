@@ -6,12 +6,14 @@ import {
   getAllListByMail,
   getAttendanceList,
   getCameraIdentifyEvent,
+  getGeneralStats,
   getIdentifyStats,
   getListFace,
   getOffList,
   getOffListAge,
   getOffListGender,
   getTimeDetail,
+  getTimeLineDetail,
   updateTimeOut,
 } from "./thunkAction";
 
@@ -23,6 +25,7 @@ const initialState = {
   offListGender: null,
   allListByDate: null,
   timeDetail: null,
+  timeLine:null,
   updating: null,
   attendance: null,
   allList: null,
@@ -32,7 +35,8 @@ const initialState = {
   listId: null,
   cameraList: null,
   cameraIdentify: null,
-  identifyStats: null
+  identifyStats: null,
+  generalStats:null
 };
 
 export const { reducer: faceDetectionReducer, actions: faceDetectionActions } =
@@ -56,7 +60,10 @@ export const { reducer: faceDetectionReducer, actions: faceDetectionActions } =
       clearSearch: (state, actions) => {
         state.searchEmail = null;
       },
-      //select date
+      //clear time detail
+      clearTimeDetail:(state)=>{
+        state.timeDetail = null
+      }
     },
     extraReducers: (builder) => {
       builder
@@ -119,6 +126,10 @@ export const { reducer: faceDetectionReducer, actions: faceDetectionActions } =
         .addCase(getTimeDetail.rejected, (state, actions) => {
           state.loading = true;
         })
+        //get time line
+        .addCase(getTimeLineDetail.fulfilled, (state, action)=>{
+          state.timeLine = action.payload
+        })
         //update time out
         .addCase(updateTimeOut.fulfilled, (state, actions) => {
           state.updating = true;
@@ -152,6 +163,10 @@ export const { reducer: faceDetectionReducer, actions: faceDetectionActions } =
         //get identify stats
         .addCase(getIdentifyStats.fulfilled, (state,action)=>{
           state.identifyStats = [...action.payload]
+        })
+        //get general stats
+        .addCase(getGeneralStats.fulfilled, (state, action)=>{
+          state.generalStats = action.payload
         })
     },
   });

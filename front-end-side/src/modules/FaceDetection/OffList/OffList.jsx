@@ -125,7 +125,7 @@ const OffList = () => {
           },
           token: {
             colorText: "rgb(108 114 147)",
-            fontSize: "18px",
+            fontSize: "16px",
             fontWeightStrong: "24px",
           },
         }}

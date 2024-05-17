@@ -40,4 +40,9 @@ export class AllList {
     GROUP BY stream_id ORDER BY stream_id ASC) as inList;`;
     return pool.execute(sql)
   }
+  static getAllListStats(date) {
+    let sql = `SELECT SUM(quantity)as quantity from (SELECT count(id) as quantity FROM videoanalytics.face_detections 
+    WHERE videoanalytics.face_detections.created_at like'%${date}%' GROUP BY stream_id ORDER BY stream_id ASC) as allList;`;
+    return pool.execute(sql)
+  }
 }

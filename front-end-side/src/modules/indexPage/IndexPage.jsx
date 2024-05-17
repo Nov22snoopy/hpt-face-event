@@ -1,21 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./indexPage.css";
-import { Card, DatePicker, Select } from "antd";
+import { Card, DatePicker, Progress, Select } from "antd";
 import {
-  AlertOutlined,
+  // AlertOutlined,
+  DesktopOutlined,
   MehOutlined,
   VideoCameraOutlined,
 } from "@ant-design/icons";
+import CountUp from "react-countup";
+
 import CameraIdentify from "../Chart/Camera/CameraIdentify";
 import CameraFaceEvent from "../Chart/Camera/CameraFaceEvent";
 import CameraPoseEvent from "../Chart/Camera/CameraPoseEvent";
 import IdentifyChart from "../Chart/Identify/IdentifyChart";
 import FaceWarningChart from "../Chart/FaceWarning/FaceWarningChart";
 import PoseWarningChart from "../Chart/PoseWarning/PoseWarningChart";
+import { useDispatch, useSelector } from "react-redux";
+import { getGeneralStats } from "../../store/faceDetection/thunkAction";
+import { useNavigate } from "react-router-dom";
+
 const IndexPage = () => {
   const [event, setEvent] = useState(["identify"]);
   const [date, setDate] = useState("");
-  console.log(event);
+  const { generalStats } = useSelector((state) => state.FaceDetectionService);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  console.log(generalStats);
+  //get general stats
+  useEffect(() => {
+    dispatch(getGeneralStats(date));
+  }, [dispatch, date]);
   const onDateChange = (date, dateString) => {
     setDate(dateString);
   };
@@ -46,13 +61,22 @@ const IndexPage = () => {
                 hoverable
               >
                 <div className="text-center">
-                  <p className="text-4xl font-semibold">7</p>
+                  <div className="text-4xl font-semibold">
+                    <CountUp start={0} end={generalStats?.camera} delay={0}>
+                      {({ countUpRef }) => (
+                        <div>
+                          <span ref={countUpRef} />
+                        </div>
+                      )}
+                    </CountUp>
+                  </div>
                 </div>
               </Card>
             </div>
             {/* identify */}
             <div className="identify col-12 col-md-6 col-xl-3">
               <Card
+                onClick={()=>{navigate('/faceDetection/authorizationList')}}
                 className="dashbroad_card"
                 title={
                   <div
@@ -71,12 +95,20 @@ const IndexPage = () => {
                 hoverable
               >
                 <div className="text-center">
-                  <p className="text-4xl font-semibold">7</p>
+                  <div className="text-4xl font-semibold">
+                    <CountUp start={0} end={generalStats?.allList} delay={0}>
+                      {({ countUpRef }) => (
+                        <div>
+                          <span ref={countUpRef} />
+                        </div>
+                      )}
+                    </CountUp>
+                  </div>
                 </div>
               </Card>
             </div>
             {/* warning face */}
-            <div className="face_warning col-12 col-md-6 col-xl-3">
+            {/* <div className="face_warning col-12 col-md-6 col-xl-3">
               <Card
                 className="dashbroad_card"
                 title={
@@ -96,12 +128,24 @@ const IndexPage = () => {
                 hoverable
               >
                 <div className="text-center">
-                  <p className="text-4xl font-semibold">7</p>
+                  <p className="text-4xl font-semibold">
+                    <CountUp
+                      start={0}
+                      end={generalStats?.faceWarning}
+                      delay={0}
+                    >
+                      {({ countUpRef }) => (
+                        <div>
+                          <span ref={countUpRef} />
+                        </div>
+                      )}
+                    </CountUp>
+                  </p>
                 </div>
               </Card>
-            </div>
+            </div> */}
             {/* warning pose */}
-            <div className="pose_warning col-12 col-md-6 col-xl-3">
+            {/* <div className="pose_warning col-12 col-md-6 col-xl-3">
               <Card
                 className="dashbroad_card"
                 title={
@@ -121,7 +165,54 @@ const IndexPage = () => {
                 hoverable
               >
                 <div className="text-center">
-                  <p className="text-4xl font-semibold">7</p>
+                  <p className="text-4xl font-semibold">
+                    <CountUp
+                      start={0}
+                      end={generalStats?.poseWarning}
+                      delay={0}
+                    >
+                      {({ countUpRef }) => (
+                        <div>
+                          <span ref={countUpRef} />
+                        </div>
+                      )}
+                    </CountUp>
+                  </p>
+                </div>
+              </Card>
+            </div> */}
+            {/* memory useage */}
+            <div className="pose_warning col-12 col-md-6">
+              <Card
+                className="dashbroad_card"
+                title={
+                  <div
+                    style={{ color: "#624bff" }}
+                    className="text-lg flex justify-between items-center"
+                  >
+                    <span>Memory usage</span>
+                    <span className="icon">
+                      <DesktopOutlined />
+                    </span>
+                  </div>
+                }
+                style={{
+                  backgroundColor: "rgba(255, 159, 64, 0.2)",
+                }}
+                hoverable
+              >
+                <div className="text-center">
+                  <div className="text-4xl font-semibold">
+                    <Progress
+                      percent={(
+                        ((Number(generalStats?.totalRAM) -
+                          Number(generalStats?.freeRAM)) /
+                          Number(generalStats?.totalRAM)) *
+                        100
+                      ).toFixed(0)}
+                      type="line"
+                    />
+                  </div>
                 </div>
               </Card>
             </div>
@@ -169,7 +260,9 @@ const IndexPage = () => {
                 <div className="col-12 col-lg-8">
                   <CameraIdentify date={date} />
                 </div>
-                <div className="col-12 col-lg-4"><IdentifyChart date={date}/></div>
+                <div className="col-12 col-lg-4">
+                  <IdentifyChart date={date} />
+                </div>
               </div>
             ) : null}
             {event.find((item) => item === "faceWarning") !== undefined ? (
@@ -177,7 +270,9 @@ const IndexPage = () => {
                 <div className="col-12 col-lg-8">
                   <CameraFaceEvent date={date} />
                 </div>
-                <div className="col-12 col-lg-4"><FaceWarningChart date={date}/></div>
+                <div className="col-12 col-lg-4">
+                  <FaceWarningChart date={date} />
+                </div>
               </div>
             ) : null}
             {event.find((item) => item === "poseWarning") !== undefined ? (
@@ -185,7 +280,9 @@ const IndexPage = () => {
                 <div className="col-12 col-lg-8">
                   <CameraPoseEvent date={date} />
                 </div>
-                <div className="col-12 col-lg-4"><PoseWarningChart date ={date}/></div>
+                <div className="col-12 col-lg-4">
+                  <PoseWarningChart date={date} />
+                </div>
               </div>
             ) : null}
           </div>

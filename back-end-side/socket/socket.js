@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import express from 'express';
 import cors from "cors";
 import http from 'http'
+
 const app = express();
 
 app.use(cors());
@@ -18,6 +19,7 @@ io.on("connection", (socket)=>{
   socket.on("disconnection", ()=> {
     console.log("server is disconnect");
   })
+
 })
 
 export {app, server, io}

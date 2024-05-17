@@ -3,19 +3,24 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getAllListByDate,
   getTimeDetail,
+  getTimeLineDetail,
 } from "../../../store/faceDetection/thunkAction";
 import faceImage from "../../../assests/img/user-img.jpg";
 import { ConfigProvider, Modal, Table, Tag } from "antd";
+import { EyeOutlined, EditOutlined } from "@ant-design/icons";
 import TimeDetail from "./TimeDetail";
 import dayjs from "dayjs";
 import moment from "moment";
 import FormSearchTimekeeping from "../../FormSearch/FormSearchTimekeeping";
+import TimeLine from "./TimeLine";
+import { faceDetectionActions } from "../../../store/faceDetection/slice";
 const Timekeeping = () => {
   const currentDate = new Date().toDateString();
   const today = moment(dayjs(currentDate)).format("YYYY-MM-DD");
   const [date, setDate] = useState(today);
   const [modalOpen, setModalOpen] = useState(false);
-  const { allListByDate, listId, searchEmail } = useSelector(
+  const [openTimeLine, setOpenTimeLine] = useState(false);
+  const { allListByDate, listId, searchEmail, updating } = useSelector(
     (state) => state.FaceDetectionService
   );
   const dispatch = useDispatch();
@@ -32,7 +37,7 @@ const Timekeeping = () => {
       );
     }
     setModalOpen(false);
-  }, [dispatch, date, listId, searchEmail]);
+  }, [dispatch, date, listId, searchEmail, updating]);
   // set date
   //******* */
   // set collumn for table
@@ -77,7 +82,10 @@ const Timekeeping = () => {
       key: "checkIn",
       render: (_, { check_in, id }) => (
         <Tag key={id} color="success">
-          {check_in}
+          {(() => {
+            const time = check_in?.split(":");
+            return time[0] + "h" + time[1] + "m";
+          })()}
         </Tag>
       ),
     },
@@ -101,7 +109,10 @@ const Timekeeping = () => {
       key: "checkOut",
       render: (_, { check_out, id }) => (
         <Tag key={id} color="error">
-          {check_out}
+          {(() => {
+            const time = check_out?.split(":");
+            return time[0] + "h" + time[1] + "m";
+          })()}{" "}
         </Tag>
       ),
     },
@@ -126,20 +137,29 @@ const Timekeeping = () => {
       key: "totaltime",
       render: (_, { totaltime, id }) => (
         <div className="text-center" key={id}>
-          {(() => {
+          {/* {(() => {
+            const time = totaltime.split(".");
             if (Number(totaltime) > 8) {
-              return <Tag color="purple">{totaltime} </Tag>;
+              return (
+                <Tag color="purple">{time[0] + "h" + time[1] * 6 + "m"} </Tag>
+              );
             }
             if (Number(totaltime) < 8 && Number(totaltime) > 0) {
-              return <Tag color="warning">{totaltime} </Tag>;
+              return (
+                <Tag color="warning">{time[0] + "h" + time[1] * 6 + "m"} </Tag>
+              );
             }
             if (Number(totaltime) === 8) {
-              return <Tag color="success">{totaltime} </Tag>;
+              return (
+                <Tag color="success">{time[0] + "h" + time[1] * 6 + "m"} </Tag>
+              );
             }
             if (Number(totaltime) === 0) {
-              return <Tag color="red">{totaltime} </Tag>;
+              return (
+                <Tag color="red">{time[0] + "h" + time[1] * 6 + "m"} </Tag>
+              );
             }
-          })()}
+          })()} */}{totaltime + 'm'}
         </div>
       ),
     },
@@ -165,8 +185,8 @@ const Timekeeping = () => {
                   60;
                 return (
                   <Tag color="warning">
-                    {" "}
-                    late: {(time / 60).toFixed(0) + "h" + (time % 60) + "m"}
+                    Arrive late:{" "}
+                    {(time / 60).toFixed(0) + "h" + (time % 60) + "m"}
                   </Tag>
                 );
               }
@@ -185,7 +205,8 @@ const Timekeeping = () => {
                   60;
                 return (
                   <Tag color="error">
-                    soon: {(time / 60).toFixed(0) + "h" + (time % 60) + "m"}
+                    Leave soon:{" "}
+                    {(time / 60).toFixed(0) + "h" + (time % 60) + "m"}
                   </Tag>
                 );
               }
@@ -194,30 +215,34 @@ const Timekeeping = () => {
         </div>
       ),
     },
-    //collumn search status
-    //************ */
-    {
-      title: "Search",
-      dataIndex: "search",
-      key: "search",
-    },
-    //collumn Edit time//
+    //collumn action time//
     //**************** */
     {
-      title: "Update time",
-      dataIndex: "udpate_time",
-      key: "update_time",
-      fixed: 'right',
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
+      fixed: "right",
+      width: "100px",
       render: (_, { id }) => (
         <div key={id}>
           <button
-            className="btn btn-primary"
+            className="edit text-lg mx-1 text-blue-600 hover:shadow-md hover:bg-blue-100 rounded transition-all px-1"
+            onClick={() => {
+              setOpenTimeLine(true);
+              dispatch(getTimeLineDetail({ id: id, date: date }));
+            }}
+          >
+            {" "}
+            <EyeOutlined />
+          </button>
+          <button
+            className="edit text-lg mx-1 text-green-600 hover:shadow-md hover:bg-green-100 rounded transition-all px-1"
             onClick={() => {
               setModalOpen(true);
               dispatch(getTimeDetail({ id: id, date: date }));
             }}
           >
-            Edit
+            <EditOutlined />
           </button>
         </div>
       ),
@@ -227,18 +252,21 @@ const Timekeeping = () => {
   return (
     <div className="container">
       <div className="form-search">
-        <FormSearchTimekeeping date={date} today={currentDate} setDate={setDate}/>
+        <FormSearchTimekeeping
+          date={date}
+          today={currentDate}
+          setDate={setDate}
+        />
       </div>
       {/* Table */}
       <ConfigProvider
         theme={{
           components: {
-            Pagination: {
-            },
+            Pagination: {},
             Table: {
               borderColor: "rgb(108 114 147)",
               fontFamily: '"Roboto, sans-serif"',
-              fontSize: '16px',
+              fontSize: "16px",
             },
           },
           token: {
@@ -256,9 +284,8 @@ const Timekeeping = () => {
           }}
           scroll={{
             x: 1300,
-            y: 750
+            y: 750,
           }}
-          
         />
       </ConfigProvider>
       {/* Modal detail */}
@@ -266,12 +293,27 @@ const Timekeeping = () => {
         title="Check time detail"
         centered
         open={modalOpen}
+        width={650}
         onCancel={() => {
           setModalOpen(false);
+          dispatch(faceDetectionActions.clearTimeDetail())
         }}
         footer={null}
       >
-        <TimeDetail date={date} />
+        <TimeDetail date={date} openModal={setModalOpen}  />
+      </Modal>
+      {/* Modal time line */}
+      <Modal
+        title="Check time line"
+        centered
+        open={openTimeLine}
+        onCancel={() => {
+          setOpenTimeLine(false);
+        }}
+        width={550}
+        footer={null}
+      >
+        <TimeLine date={date} />
       </Modal>
     </div>
   );

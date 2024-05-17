@@ -3,6 +3,7 @@ import { faceDetectionService } from "../../service/FaceDetection.service";
 import { offListService } from "../../service/OffList.service";
 import { message } from "antd";
 
+
 export const getAllFaceDetection = createAsyncThunk(
   "/faceDetection",
   async (query, { rejectWithValue }) => {
@@ -121,6 +122,17 @@ export const updateTimeOut = createAsyncThunk(
   }
 );
 
+//get time line detail
+export const getTimeLineDetail = createAsyncThunk('/faceDetection/getTimeLineDetail', async(query, {rejectWithValue})=>{
+  console.log(query);
+  try {
+    const res = await faceDetectionService.getTimeLineDetail(query)
+    return res.data.content
+  } catch (error) {
+    return rejectWithValue(error)
+  }
+})
+
 // get all list face
 export const getListFace = createAsyncThunk(
   "/faceDetection/allListFace",
@@ -215,3 +227,15 @@ export const getIdentifyStats = createAsyncThunk(
     }
   }
 );
+
+//get general stats
+export const getGeneralStats = createAsyncThunk(`/faceDetection/getGeneralStats`, async(query,{rejectWithValue})=>{
+  try {
+    const res = await faceDetectionService.getGeneralStats(query)
+    return res.data.content
+  } catch (error) {
+    return rejectWithValue(error)
+  }
+})
+
+

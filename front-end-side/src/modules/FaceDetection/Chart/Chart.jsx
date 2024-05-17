@@ -26,7 +26,7 @@ const Chart = () => {
   };
   return (
     <div className="chart container">
-      <div className="data-picker w-fit ml-auto md:mr-20">
+      <div className="data-picker w-fit  md:mr-20">
         <ConfigProvider
           theme={{
             components: {
@@ -49,6 +49,7 @@ const Chart = () => {
           />
         </ConfigProvider>
       </div>
+      <hr  className="my-3"/>
       {/*Render Chart  */}
       {/* ************ */}
       <div className="row mt-3" >

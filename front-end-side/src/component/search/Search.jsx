@@ -29,7 +29,6 @@ const Search = (props) => {
         }}
       >
         <AutoComplete
-          size="default"
           popupMatchSelectWidth={252}
           style={{
             width: 250,

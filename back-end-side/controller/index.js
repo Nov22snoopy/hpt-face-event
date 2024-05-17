@@ -134,28 +134,28 @@ export async function getAllListByDate(date, list_id, email) {
 export async function caculateTimekeeping(id, date) {
   try {
     const [data] =
-      await pool.query(`SELECT DATE_FORMAT( videoanalytics.face_detections.created_at, "%H:%i") AS time
+      await pool.query(`SELECT DATE_FORMAT( videoanalytics.face_detections.created_at, "%H:%i") AS time, stream_id as camera
     FROM videoanalytics.face_detections 
-    INNER JOIN videoanalytics.face_list_items ON  videoanalytics.face_detections.list_item_id = videoanalytics.face_list_items.id
     WHERE date(videoanalytics.face_detections.created_at) = '${date}'  AND videoanalytics.face_detections.list_item_id = ${id};`);
     let timekeeping = [];
     let result = 0;
-    if (data) {
-      const time = data?.map((t) => t.time);
-
-      if (time) {
-        for (let i = 0; i < time?.length; i++) {
-          timekeeping.push(time[i].split(":"));
-          result =
-            Number(timekeeping[timekeeping.length - 1][0]) * (60000 * 60) +
-            Number(timekeeping[timekeeping.length - 1][1]) * 60000 -
-            (Number(timekeeping[0][0]) * (60000 * 60) +
-              Number(timekeeping[0][1]) * 60000);
-        }
+    for (let i = 0; i < data?.length - 1; i++) {
+      if (data[i]?.camera !== data[i + 1]?.camera) {
+        timekeeping.push(data[i]?.time, data[i + 1]?.time);
       }
     }
-    let totaltime = ((result * 1.667e-5) / 60).toFixed(1);
-    return totaltime;
+    if (timekeeping.length > 0) {
+      for (let i = 0; i < timekeeping?.length; i++) {
+        result =
+          Number(timekeeping[1].split(":")[0] * 60) +
+          Number(timekeeping[1].split(":")[1]) -
+          (Number(timekeeping[0].split(":")[0] * 60) +
+            Number(timekeeping[0].split(":")[1]));
+      }
+    }
+
+    console.log(result);
+    return result;
   } catch (error) {
     console.log(error);
   }
@@ -243,31 +243,58 @@ WHERE date(videoanalytics.face_detections.created_at) = '${date}'  AND videoanal
 export async function getTimekeepingDetail(id, date) {
   try {
     const [data] =
-      await pool.query(`SELECT videoanalytics.face_detections.list_id , videoanalytics.face_list_items.id, videoanalytics.face_list_items.name, videoanalytics.face_list_items.comment, videoanalytics.face_detections.gender,videoanalytics.face_detections.stream_id, videoanalytics.face_detections.va_id ,DATE_FORMAT(videoanalytics.face_detections.created_at, '%H:%i')as time
+      await pool.query(`SELECT videoanalytics.face_detections.list_id , videoanalytics.face_list_items.id, videoanalytics.face_list_items.name, videoanalytics.face_list_items.comment, videoanalytics.face_detections.gender,videoanalytics.face_detections.stream_id ,DATE_FORMAT(videoanalytics.face_detections.created_at, '%H:%i') AS time
     FROM videoanalytics.face_detections 
     INNER JOIN videoanalytics.face_list_items ON videoanalytics.face_detections.list_item_id = videoanalytics.face_list_items.id 
     WHERE videoanalytics.face_detections.list_item_id = ${id} AND date(videoanalytics.face_detections.created_at) = '${date}';`);
-    const checkIn = "check_in";
-    const checkOut = "check_out";
-
-    if (data?.length > 0) {
-      const time = data?.map((t) => t.time);
-      if (time?.length > 1) {
-        for (let i = 0; i < time?.length; i++) {
-          data[0][checkIn] = time[0];
-          data[0][checkOut] = time[time.length - 1];
-        }
-      } else if (time?.length === 1) {
-        data[0][checkIn] = time[0];
-        data[0][checkOut] = "00:00";
+    const result = [];
+    for (let i = 0; i < data.length; i++) {
+      if (data[i]?.id !== data[i + 1]?.id) {
+        result.push(data[i]);
       }
     }
-    const { time, ...result } = data[0];
+    if (result.length > 0) {
+      result.forEach((t) => {
+        t.time = data?.map((t) => {
+          return {
+            check_in: t.stream_id === 7 || 4 ? t.time : "00:00",
+            check_out: t.stream_id === 3 ? t.time : "00:00",
+          };
+        });
+      });
+      // result[0].time.forEach((t, index) => {
+      //   if (
+      //     time[index].check_in.split(":")[0] ===
+      //       time[index].check_in.split(":")[0] &&
+      //     Number(time[index].check_in.split(":")[1]) -
+      //       Number(time[index].check_in.split(":")[1]) <=
+      //       3
+      //   ) {
+      //     time.slice(index + 1, 1);
+      //   }
+      // });
+    }
+
     return result;
   } catch (error) {
     console.log(error);
   }
 }
+
+//get in list time line
+export const getTimeLineDetail = async (id, date) => {
+  try {
+    const [data] =
+      await pool.query(`SELECT face_list_items.name, comment as email ,stream_id, face_detections.created_at FROM videoanalytics.face_detections 
+    INNER JOIN face_list_items ON face_detections.list_item_id = face_list_items.id
+    WHERE list_item_id is not null and date(face_detections.created_at) like "%${date}%" and list_item_id = ${id};
+    `);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // get all list item
 export async function getAllListAttendance() {
   try {
@@ -352,5 +379,14 @@ export const getAllCamera = async () => {
     console.log(error);
   }
 };
-
-
+//get active camera
+export const getActiveCamera = async () => {
+  try {
+    const [data] = await pool.query(
+      `SELECT videoanalytics.streams.id, videoanalytics.streams.status FROM videoanalytics.streams WHERE status = 1;`
+    );
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};

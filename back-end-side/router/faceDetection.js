@@ -2,6 +2,7 @@ import express from "express";
 import {
   caculateOT,
   caculateTimekeeping,
+  getActiveCamera,
   getAllCamera,
   getAllListAttendance,
   getAllListByDate,
@@ -14,6 +15,7 @@ import {
   getOffListFace,
   getOffListGender,
   getTimeCheck,
+  getTimeLineDetail,
   getTimekeepingDetail,
 } from "../controller/index.js";
 import { io } from "../socket/socket.js";
@@ -22,6 +24,9 @@ import { Indentify } from "../models/FaceDetecetion/Identify.js";
 import { NotifiTime } from "../models/FaceDetecetion/NotifiTime.js";
 import moment from "moment";
 import { NotifiCamera } from "../models/FaceDetecetion/NotifiCamera.js";
+import { NotifiEvent } from "../models/FaceDetecetion/NotifiEvent.js";
+import { WarningPoseEvent } from "../models/PoseDetection/WarningPoseEvent.js";
+import os from "os";
 const route = express.Router();
 // get all list
 //********* */
@@ -113,6 +118,8 @@ route.post("/allListByDate", async (req, res, next) => {
     }
     //caculate working time
     const totaltime = "totaltime";
+    // let hours = await caculateTimekeeping(3, req.body.date);
+
     if (result.length >= 1) {
       for (let j = 0; j < result.length; j++) {
         let hours = await caculateTimekeeping(result[j].id, req.body.date);
@@ -163,11 +170,29 @@ route.post("/allListByDate", async (req, res, next) => {
 //******************************** */
 route.post("/timeDetail", async (req, res, next) => {
   try {
-    const data = await getTimekeepingDetail(req.body.id, req.body.date);
+    const [data] = await getTimekeepingDetail(req.body.id, req.body.date);
     res.status(200).json({
       message: "get detail successfully",
       content: data,
       statusCode: 200,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+    next(error);
+  }
+});
+
+//get time line detail
+route.get("/getTimeLineDetail", async (req, res, next) => {
+  const id = req.query.id;
+  const date = req.query.date;
+  try {
+    const data = await getTimeLineDetail(id, date);
+    res.status(200).json({
+      message: "get time line detail successfully",
+      content: data,
     });
   } catch (error) {
     res.status(500).json({
@@ -435,7 +460,7 @@ route.post("/addList", async (req, res, next) => {
             console.log(item.name);
             console.log(newList);
             io.emit("warning", {
-              type: 'face alert',
+              type: "face alert",
               check: checkSetting,
               object: newList,
               notification: {
@@ -482,46 +507,84 @@ route.get("/camera", async (req, res, next) => {
 });
 
 //get camera event
-route.get('/getAllCameraIdentfy', async(req, res, next)=>{
-  const date = req.query.date
+route.get("/getAllCameraIdentfy", async (req, res, next) => {
+  const date = req.query.date;
   try {
-    const [data] = await AllList.getCameraAllListByDate(date)
+    const [data] = await AllList.getCameraAllListByDate(date);
     return res.status(200).json({
-      message: 'get camara itdentify successfully',
-      content: data
-    })
+      message: "get camara itdentify successfully",
+      content: data,
+    });
   } catch (error) {
     res.status(500).json({
-      message:error.message
-    })
-    next(error)
+      message: error.message,
+    });
+    next(error);
   }
-})
+});
 //get quantity in list and out list
-route.get('/getIdentifyStats', async(req, res, next)=>{
+route.get("/getIdentifyStats", async (req, res, next) => {
   const date = req.query.date;
   try {
     const [inList] = await AllList.getAllInList(date);
     const [outList] = await AllList.getAllOutList(date);
     const result = [
-      {name: 'InList', quantity: 0},
-      {name: 'OutList', quantity: 0}
-    ]
-    if(inList && outList) {
-      result[0].quantity = inList[0].inList
-      result[1].quantity = outList[0].outList
-
+      { name: "InList", quantity: 0 },
+      { name: "OutList", quantity: 0 },
+    ];
+    if (inList && outList) {
+      result[0].quantity = inList[0].inList;
+      result[1].quantity = outList[0].outList;
     }
     res.status(200).json({
-      message: 'get identify stats successfully',
-      content:result
-    })
+      message: "get identify stats successfully",
+      content: result,
+    });
   } catch (error) {
     res.status(500).json({
-      message:error.message
-    })
-    next(error)
+      message: error.message,
+    });
+    next(error);
   }
-})
+});
 
+route.get("/getGeneralStats", async (req, res, next) => {
+  const date = req.query.date;
+  try {
+    const totalRAM = os.totalmem();
+    console.log(`Total RAM: ${totalRAM / (1024 * 1024)} MB`);
+
+    // Get the available memory in bytes
+    const freeRAM = os.freemem();
+    console.log(`Free RAM: ${freeRAM / (1024 * 1024)} MB`);
+
+    //memory
+    const camera = await getActiveCamera();
+    const [allList] = await AllList.getAllListStats(date);
+    const [facWarning] = await NotifiEvent.getTotalFaceWarning(date);
+    const [poseWarning] = await WarningPoseEvent.getTolalPoseWarning(date);
+    const result = {
+      camera: camera?.length,
+      allList: 0,
+      faceWarning: 0,
+      poseWarning: 0,
+      totalRAM: Number(totalRAM / (1024 * 1024)).toFixed(0),
+      freeRAM: Number(freeRAM / (1024 * 1024)).toFixed(0),
+    };
+    if (allList && facWarning && poseWarning) {
+      result.allList = allList[0].quantity;
+      result.faceWarning = facWarning[0].quantity;
+      result.poseWarning = poseWarning[0].quantity;
+    }
+    res.status(200).json({
+      message: "get general stats successfully",
+      content: result,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+    next(error);
+  }
+});
 export default route;
