@@ -154,7 +154,6 @@ export async function caculateTimekeeping(id, date) {
       }
     }
 
-    console.log(result);
     return result;
   } catch (error) {
     console.log(error);
@@ -254,27 +253,29 @@ export async function getTimekeepingDetail(id, date) {
       }
     }
     if (result.length > 0) {
-      result.forEach((t) => {
-        t.time = data?.map((t) => {
-          return {
-            check_in: t.stream_id === 7 || 4 ? t.time : "00:00",
-            check_out: t.stream_id === 3 ? t.time : "00:00",
-          };
-        });
-      });
-      // result[0].time.forEach((t, index) => {
-      //   if (
-      //     time[index].check_in.split(":")[0] ===
-      //       time[index].check_in.split(":")[0] &&
-      //     Number(time[index].check_in.split(":")[1]) -
-      //       Number(time[index].check_in.split(":")[1]) <=
-      //       3
-      //   ) {
-      //     time.slice(index + 1, 1);
-      //   }
-      // });
+      result[0].time = data.map((t)=>{
+        if (t.stream_id === 4 || t.stream_id === 7) {
+          return { check_in : t.time}
+        } else if (t.stream_id === 3) {
+          return {check_out: t.time}
+        }
+      })
     }
-
+    if (result.length > 0) {
+        
+    }
+    // if (result.length > 0) {
+    //   const { time } = result[0];
+    //   for (let i = 0; i < time?.length - 1; i++) {
+    //     if (time[i].check_out === "00:00") {
+    //       if (Number(time[i].check_in.split(":")[0]) === Number(time[i+1].check_in.split(':')[0])) {
+    //         if(Number(time[i].check_in.split(":")[1]) - Number(time[i+1].check_in.split(':')[1]) <= 5) {
+    //           time.splice(i, 1)
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
     return result;
   } catch (error) {
     console.log(error);
