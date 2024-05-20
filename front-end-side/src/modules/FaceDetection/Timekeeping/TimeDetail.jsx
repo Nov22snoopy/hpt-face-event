@@ -34,8 +34,8 @@ const TimeDetail = (props) => {
         gender: timeDetail?.gender === 1 ? "Male" : "Female",
         time: timeDetail?.time.map((item) => {
           return {
-            check_in: dayjs(item.check_in, "HH:mm"),
-            check_out: dayjs(item.check_out, "HH:mm"),
+            check_in: item.check_in? dayjs(item.check_in, "HH:mm"): '',
+            check_out: item.check_out? dayjs(item.check_out, "HH:mm"): '',
           };
         }),
       });
@@ -53,30 +53,30 @@ const TimeDetail = (props) => {
   };
   
   //validate time
-  const disableHours = (maxHour, minHour) => {
+  const disableHours = (minHour,maxHour) => {
     if (timeDetail) {
-      const max = maxHour.split(":");
-      const min = minHour.split(":");
+      const min = minHour?minHour.split(":"): '00:00'.split(':');
+      const max = maxHour?maxHour.split(":"): '23:59'.split(':');
       const hours = [];
-      for (let i = 0; i < Number(max[0]); i += 1) {
+      for (let i = 0; i < Number(min[0]); i += 1) {
         hours.push(i);
       }
-      for (let j = Number(min[0]) + 1; j < 24; j += 1) {
+      for (let j = Number(max[0]) + 1; j < 24; j += 1) {
         hours.push(j);
       }
       return hours;
     }
   };
-  const disabledMinutes = (selectedHour, maxHour, minHour) => {
+  const disabledMinutes = (selectedHour,minHour, maxHour) => {
     if (timeDetail) {
-      const max = maxHour.split(":");
       const min = minHour.split(":");
+      const max = maxHour.split(":");
       const minutes = [];
-      if (selectedHour === Number(max[0])) {
-        for (let i = 0; i <= Number(max[1]); i += 1) minutes.push(i);
-      }
       if (selectedHour === Number(min[0])) {
-        for (let i = Number(min[1]); i <= 59; i += 1) minutes.push(i);
+        for (let i = 0; i <= Number(min[1]); i += 1) minutes.push(i);
+      }
+      if (selectedHour === Number(max[0])) {
+        for (let i = Number(max[1]); i <= 59; i += 1) minutes.push(i);
       }
       return minutes;
     }
@@ -121,10 +121,50 @@ const TimeDetail = (props) => {
                         format="HH:mm"
                         onChange={onChange}
                         disabled={
-                          timeDetail?.time[index].check_in === "00:00"
+                          timeDetail?.time[index].check_in === null
                             ? false
                             : true
                         }
+                        disabledTime={() => {
+                          if (timeDetail) {
+                            const { time } = timeDetail;
+                            if (time.length > 0 && index + 1 < time.length) {
+                              if (time[index].check_in === null) {
+                                return {
+                                  disabledHours: () =>
+                                    disableHours(
+                                      time[index - 1]?.check_out,
+                                      time[index]?.check_out
+                                    ),
+                                  disabledMinutes: (validate) =>
+                                    disabledMinutes(
+                                      validate,
+                                      time[index - 1]?.check_out,
+                                      time[index]?.check_out
+                                    ),
+                                };
+                              } else if (time[index]?.check_in !== null) {
+                                return;
+                              }
+                            }
+                            if (time.length > 0 && index + 1 === time.length) {
+                              if (time[index].check_in === null) {
+                                return {
+                                  disabledHours: () =>
+                                    disableHours( "00:00",time[index]?.check_out),
+                                  disabledMinutes: (validate) =>
+                                    disabledMinutes(
+                                      validate,
+                                      "00:00",
+                                      time[index]?.check_out
+                                    ),
+                                };
+                              } else if (time[index]?.check_out !== null) {
+                                return;
+                              }
+                            }
+                          }
+                        }}
                       />
                     </Form.Item>
                     <Form.Item
@@ -137,7 +177,7 @@ const TimeDetail = (props) => {
                         format="HH:mm"
                         onChange={onChange}
                         disabled={
-                          timeDetail?.time[index].check_out === "00:00"
+                          timeDetail?.time[index].check_out === null
                             ? false
                             : true
                         }
@@ -145,7 +185,7 @@ const TimeDetail = (props) => {
                           if (timeDetail) {
                             const { time } = timeDetail;
                             if (time.length > 0 && index + 1 < time.length) {
-                              if (time[index].check_out === "00:00") {
+                              if (time[index].check_out === null) {
                                 return {
                                   disabledHours: () =>
                                     disableHours(
@@ -159,12 +199,12 @@ const TimeDetail = (props) => {
                                       time[index + 1].check_in
                                     ),
                                 };
-                              } else if (time[index]?.check_out !== "00:00") {
+                              } else if (time[index]?.check_out !== null) {
                                 return;
                               }
                             }
                             if (time.length > 0 && index + 1 === time.length) {
-                              if (time[index].check_out === "00:00") {
+                              if (time[index].check_out === null) {
                                 return {
                                   disabledHours: () =>
                                     disableHours(time[index].check_in, "24:00"),
@@ -175,7 +215,7 @@ const TimeDetail = (props) => {
                                       "24:00"
                                     ),
                                 };
-                              } else if (time[index]?.check_out !== "00:00") {
+                              } else if (time[index]?.check_out !== null) {
                                 return;
                               }
                             }

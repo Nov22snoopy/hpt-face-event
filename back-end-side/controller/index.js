@@ -253,29 +253,46 @@ export async function getTimekeepingDetail(id, date) {
       }
     }
     if (result.length > 0) {
-      result[0].time = data.map((t)=>{
-        if (t.stream_id === 4 || t.stream_id === 7) {
-          return { check_in : t.time}
-        } else if (t.stream_id === 3) {
-          return {check_out: t.time}
+      const time = []
+      
+      for(let i = 0; i < data.length; i++ ) {
+        if ((data[i].stream_id === 4 || data[i].stream_id === 7)&&(data[i+1]?.stream_id===3)) {
+          time.push({check_in: data[i].time, check_out: data[i+1].time})
+          data.splice(i,1)
         }
-      })
+        else if ((data[i].stream_id === 4 || data[i].stream_id === 7)&&(data[i+1]?.stream_id !== 3)) {
+          time.push({check_in: data[i].time, check_out: null})
+
+        }
+        else if ((data[i].stream_id !== 4 || data[i].stream_id !== 7)&&(data[i].stream_id === 3)) {
+          time.push({check_in:null, check_out: data[i].time})
+
+        } 
+      }
+
+
+      result[0].time = time
     }
     if (result.length > 0) {
-        
+      const { time } = result[0];
+      for (let i = 0; i < time?.length - 1; i++) {
+        if (!time[i].check_out && time[i+1].check_in) {
+          if (Number(time[i]?.check_in.split(":")[0]) === Number(time[i+1]?.check_in.split(':')[0])) {
+            if(Number(time[i]?.check_in.split(":")[1]) - Number(time[i+1]?.check_in.split(':')[1]) <= 5) {
+              time.splice(i, 1)
+            }
+          }
+        }
+        if (!time[i].check_in && time[i+1].check_out) {
+          if (Number(time[i]?.check_out.split(":")[0]) === Number(time[i+1]?.check_out.split(':')[0])) {
+            if(Number(time[i]?.check_out.split(":")[1]) - Number(time[i+1]?.check_out.split(':')[1]) <= 5) {
+              time.splice(i, 1)
+            }
+          }
+        }
+      }
     }
-    // if (result.length > 0) {
-    //   const { time } = result[0];
-    //   for (let i = 0; i < time?.length - 1; i++) {
-    //     if (time[i].check_out === "00:00") {
-    //       if (Number(time[i].check_in.split(":")[0]) === Number(time[i+1].check_in.split(':')[0])) {
-    //         if(Number(time[i].check_in.split(":")[1]) - Number(time[i+1].check_in.split(':')[1]) <= 5) {
-    //           time.splice(i, 1)
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
+    console.log(data);
     return result;
   } catch (error) {
     console.log(error);

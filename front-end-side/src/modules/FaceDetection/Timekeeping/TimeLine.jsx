@@ -25,9 +25,10 @@ const TimeLine = () => {
           {timeLine ? moment(timeLine[0].created_at).format("DD-MM-YYYY") : ""}
         </h1>
       </div>
-      <div className="pt-3 max-h-72  overflow-auto ">
+      <div className="pt-3  max-h-72  overflow-auto ">
         <Timeline
-          mode="alternate"
+         className="w-2/3 mx-auto"
+          mode="left"
           items={timeLine?.map((item, index) => {
             return {
               dot: (
@@ -38,11 +39,11 @@ const TimeLine = () => {
                   }}
                 />
               ),
-              color: index % 2 === 0 ? "green" : "red",
+              color: item.stream_id  === 4 || item.stream_id === 7 ? "green" : "red",
               children: (
                 <div className="mx-2 text-lg">
                   <p>
-                    {index % 2 === 0 ? (
+                    {item.stream_id  === 4 || item.stream_id === 7 ? (
                       <span className="font-semibold">Check in:</span>
                     ) : (
                       <span className="font-semibold">Check out:</span>
